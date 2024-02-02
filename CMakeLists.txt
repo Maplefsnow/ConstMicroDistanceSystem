@@ -24,7 +24,7 @@ aux_source_directory(./module modules)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-include_directories(include)
+include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 link_directories(${OpenCV_DIR} ./lib)
 
@@ -33,5 +33,6 @@ add_executable(${PROJECT_NAME}
     ${modules} ${srcs} 
 ) 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets # Qt6 Shared Library
+                                              ${OpenCV_LIBS}
                                               MvCameraControl.lib
                                               ADVMOT.lib) 
