@@ -1,5 +1,5 @@
 {
-    "qtConfigure.qtKitDir": "d:/Qt6.3.2/6.3.2/mingw_64",
+    "qtConfigure.qtKitDir": "d:/Qt/6.6.2/mingw_64",
     "files.associations": {
         "qmainwindow": "cpp",
         "qdialog": "cpp",

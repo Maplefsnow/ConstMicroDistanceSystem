@@ -4,12 +4,15 @@
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
 struct CameraParam {
+    char exposureAutoTmp[5] = "Once";
+    char pixelFormatTmp[6] = "Mono8";
+
     int width = 800;
     int height = 600;
     float exposureTime = 30000.0;
-    char* exposureAuto = "Once";
+    char* exposureAuto = exposureAutoTmp;
     int triggerMode = 0;
-    char* pixelFormat = "Mono8";
+    char* pixelFormat = pixelFormatTmp;
 };
 
 

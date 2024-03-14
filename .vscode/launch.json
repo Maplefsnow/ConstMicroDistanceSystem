@@ -3,6 +3,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/ConstMicroDistanceSystem.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\Qt\\Tools\\mingw1120_64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "visualizerFile": "c:\\Users\\aicter\\AppData\\Roaming\\Code\\User\\workspaceStorage\\eb7992c23068865f0988fbd4de157aa1\\tonka3000.qtvsctools\\qt.natvis.xml"
+        },
+        {
             "name": "QtBuild",
             "type": "cppdbg",
             "request": "launch",
@@ -13,12 +39,12 @@
             "environment": [
                 {
                     "name": "PATH",
-                    "value": "d:/Qt6.3.2/6.3.2/mingw_64/bin"
+                    "value": "d:/Qt/6.6.2/mingw_64/bin"
                 }
             ],
             "externalConsole": false,
-            "miDebuggerPath": "D:\\Qt6.3.2\\Tools\\mingw1120_64\\bin\\gdb.exe",
-            "visualizerFile": "c:\\Users\\AICTER\\AppData\\Roaming\\Code\\User\\workspaceStorage\\a2e33680f924dc0de3d600853e5004d0\\tonka3000.qtvsctools\\qt.natvis.xml"
+            "miDebuggerPath": "D:\\Qt\\Tools\\mingw1120_64\\bin\\gdb.exe",
+            "visualizerFile": "c:\\Users\\aicter\\AppData\\Roaming\\Code\\User\\workspaceStorage\\eb7992c23068865f0988fbd4de157aa1\\tonka3000.qtvsctools\\qt.natvis.xml"
         }
     ]
 }

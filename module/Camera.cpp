@@ -35,16 +35,18 @@ Camera::Camera(int index) {
     throwError(MV_CC_EnumDevices(MV_GIGE_DEVICE | MV_USB_DEVICE, &stDeviceList), "Enum camera devices fail!");
 
     if(stDeviceList.nDeviceNum <= 0) throw "Find no devices!";
-    if(index > stDeviceList.nDeviceNum-1) throw "No such device! Total num: " + stDeviceList.nDeviceNum;
+    if(index > stDeviceList.nDeviceNum-1) {
+        throw "No such device! Total num: " + stDeviceList.nDeviceNum;
+    }
 
     throwError(MV_CC_CreateHandle(&this->handle, stDeviceList.pDeviceInfo[index]), "Create device handle fail!");
 
-    MVCC_INTVALUE stParam;
-    memset(&stParam, 0, sizeof(MVCC_INTVALUE));
-    throwError(MV_CC_GetIntValue(handle, "PayloadSize", &stParam), "Get PayloadSize fail!");
-    this->payloadSize = stParam.nCurValue;
-
     throwError(MV_CC_OpenDevice(this->handle), "Open device fail!");
+
+    MVCC_INTVALUE_EX stParam;
+    memset(&stParam, 0, sizeof(MVCC_INTVALUE));
+    throwError(MV_CC_GetIntValueEx(this->handle, "PayloadSize", &stParam), "Get PayloadSize fail!");
+    this->payloadSize = stParam.nCurValue;
 }
 
 Camera::~Camera() {

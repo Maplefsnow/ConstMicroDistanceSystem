@@ -13,9 +13,17 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
 {
     ui->setupUi(this);
 
-    this->cam = new Camera(0);
-    cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
-    cam->startGrab();
+    try
+    {
+        this->cam = new Camera(0);
+    }
+    catch(const char* e)
+    {
+        std::cerr << e << '\n';
+    }
+    
+    this->cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
+    this->cam->startGrab();
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
@@ -24,5 +32,5 @@ ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 }
 
 void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
-    
+    std::cout << "image get!" << std::endl;
 }

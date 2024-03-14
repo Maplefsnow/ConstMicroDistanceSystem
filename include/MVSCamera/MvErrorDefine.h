@@ -35,6 +35,7 @@
 #define MV_E_LOAD_LIBRARY           0x8000000C  ///< \~chinese 动态导入DLL失败          \~english Load library failed
 #define MV_E_NOOUTBUF               0x8000000D  ///< \~chinese 没有可输出的缓存         \~english No Avaliable Buffer
 #define MV_E_ENCRYPT                0x8000000E  ///< \~chinese 加密错误                 \~english Encryption error
+#define MV_E_OPENFILE               0x8000000F  ///< \~chinese 打开文件出现错误         \~english open file error
 #define MV_E_UNKNOW                 0x800000FF  ///< \~chinese 未知的错误               \~english Unknown error
 /// @}
 
@@ -71,6 +72,7 @@
 #define MV_E_BUSY                   0x80000204  ///< \~chinese 设备忙，或网络断开       \~english Device is busy, or network disconnected
 #define MV_E_PACKET                 0x80000205  ///< \~chinese 网络包数据错误           \~english Network data packet error
 #define MV_E_NETER                  0x80000206  ///< \~chinese 网络相关错误             \~english Network error
+#define MV_E_KEY_VERIFICATION       0x8000020F  ///< \~chinese 秘钥校验错误              \~english SwitchKey error
 #define MV_E_IP_CONFLICT            0x80000221  ///< \~chinese 设备IP冲突               \~english Device IP conflict
 /// @}
 

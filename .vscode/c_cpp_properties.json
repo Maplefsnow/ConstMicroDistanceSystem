@@ -8,8 +8,9 @@
                 "${vcpkgRoot}/x86-windows/include",
                 "${workspaceFolder}/**/*",
                 "${workspaceFolder}/include",
-                "D:/Qt6.3.2/6.3.2/mingw_64/include/**",
-                "D:/Qt6.3.2/6.3.2/mingw_64/include/QtWidgets"
+                "D:/Qt/6.6.2/mingw_64/include/**",
+                "D:/Qt/6.6.2/mingw_64/include/QtWidgets",
+                "D:/opencv-4.9.0/build/x64/mingw/install/include"
             ],
             "defines": [
                 "_DEBUG",

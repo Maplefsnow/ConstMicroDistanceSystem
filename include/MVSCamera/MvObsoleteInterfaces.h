@@ -234,7 +234,7 @@ MV_CAMCTRL_API int __stdcall MV_CC_RegisterImageCallBack(void* handle,
 
 /************************************************************************
  *  @fn     MV_CC_SaveImage
- *  @brief  保存图片（该接口已弃用，建议改用 MV_CC_SaveImageEx2接口）
+ *  @brief  保存图片（该接口仅支持Windows且已弃用，建议改用 MV_CC_SaveImageEx2接口）
  *  @param  pSaveParam             [IN][OUT]          保存图片参数结构体
                        pData;              // [IN]     输入数据缓存
                        nDataLen;           // [IN]     输入数据大小
@@ -248,7 +248,7 @@ MV_CAMCTRL_API int __stdcall MV_CC_RegisterImageCallBack(void* handle,
  *  @return 成功，返回MV_OK；错误，返回错误码 
  
  *  @fn     MV_CC_SaveImage
- *  @brief  Save image (This interface is abandoned, it is recommended to use the MV_CC_SaveImageEx)
+ *  @brief  Save image (This interface only supports on Windows, and is abandoned, it is recommended to use the MV_CC_SaveImageEx2)
  *  @param  pSaveParam             [IN][OUT]          Save image parameters structure
                        pData;              // [IN]     Input data buffer
                        nDataLen;           // [IN]     Input data size
@@ -265,7 +265,7 @@ MV_CAMCTRL_API int __stdcall MV_CC_SaveImage(IN OUT MV_SAVE_IMAGE_PARAM* pSavePa
 
 /************************************************************************
  *  @fn     MV_CC_SaveImageEx
- *  @brief  保存图片，支持Bmp和Jpeg.编码质量在50-99之前 （该接口已弃用，建议改用 MV_CC_SaveImageEx2接口）
+ *  @brief  保存图片，支持Bmp和Jpeg.编码质量在50-99之前 （该接口仅支持Windows且已弃用，建议改用 MV_CC_SaveImageEx2接口）
  *  @param  pSaveParam             [IN][OUT]          保存图片参数结构体
                        pData;              // [IN]     输入数据缓存
                        nDataLen;           // [IN]     输入数据大小
@@ -282,6 +282,7 @@ MV_CAMCTRL_API int __stdcall MV_CC_SaveImage(IN OUT MV_SAVE_IMAGE_PARAM* pSavePa
  
  *  @fn     MV_CC_SaveImageEx
  *  @brief  Save image, support Bmp and Jpeg. Encoding quality, (50-99]
+            This interface only supports on Windows, and is abandoned, it is recommended to use the MV_CC_SaveImageEx2
  *  @param  pSaveParam             [IN][OUT]           Save image parameters structure
                        pData;              // [IN]     Input data buffer
                        nDataLen;           // [IN]     Input data size
@@ -355,21 +356,6 @@ MV_CAMCTRL_API int __stdcall MV_CC_SetBayerCLUTParam(IN void* handle, IN MV_CC_C
 
 /********************************************************************//**
  *  @~chinese
- *  @brief  图像对比度调节（该接口已弃用，建议改用ISP Tool方式进行调节）
- *  @param  handle                      [IN]            设备句柄
- *  @param  pstContrastParam            [IN]            对比度调节参数
- *  @return 成功，返回MV_OK；错误，返回错误码 
-
- *  @~english
- *  @brief  Adjust image contrast
- *  @param  handle                      [IN]            Device handle
- *  @param  pstContrastParam            [IN]            Contrast parameter structure
- *  @return Success, return MV_OK. Failure, return error code
- ************************************************************************/
-MV_CAMCTRL_API int __stdcall MV_CC_ImageContrast(IN void* handle, IN OUT MV_CC_CONTRAST_PARAM* pstContrastParam);
-
-/********************************************************************//**
- *  @~chinese
  *  @brief  图像锐化（该接口已弃用，建议改用ISP Tool方式进行锐化）
  *  @param  handle                      [IN]            设备句柄
  *  @param  pstSharpenParam             [IN]            锐化参数
@@ -439,12 +425,14 @@ MV_CAMCTRL_API int __stdcall MV_CC_SpatialDenoise(IN void* handle, IN OUT MV_CC_
  *  @param  handle                      [IN]            设备句柄
  *  @param  pstLSCCalibParam            [IN]            标定参数
  *  @return 成功，返回MV_OK；错误，返回错误码 
+ *  @remarks 
 
  *  @~english
  *  @brief  LSC Calib
  *  @param  handle                      [IN]            Device handle
  *  @param  pstLSCCalibParam            [IN]            LSC Calib parameter structure
  *  @return Success, return MV_OK. Failure, return error code
+ *  @remarks 
  ************************************************************************/
 MV_CAMCTRL_API int __stdcall MV_CC_LSCCalib(IN void* handle, IN OUT MV_CC_LSC_CALIB_PARAM* pstLSCCalibParam);
 
@@ -480,14 +468,14 @@ MV_CAMCTRL_API int __stdcall MV_GIGE_ForceIp(IN void* handle, unsigned int nIP);
 
 /************************************************************************
  *  @fn     MV_CC_RegisterEventCallBack
- *  @brief  注册事件回调（该接口已弃用，建议改用 MV_CC_RegisterEventCallBackEx接口）
+ *  @brief  注册事件回调（该接口已弃用，建议改用 MV_CC_RegisterEventCallBackEx接口），该接口只支持网口设备，不支持U口和GenTL设备
  *  @param  handle：设备句柄
  *  @param  cbEvent           [IN]      事件回调函数指针
  *  @param  pUser             [IN]      用户自定义变量
  *  @return 见返回错误码
  
  *  @fn     MV_CC_RegisterEventCallBack
- *  @brief  Register event callback (this interface has been deprecated and is recommended to be converted to the MV_CC_RegisterEventCallBackEx interface)
+ *  @brief  Register event callback (this interface has been deprecated and is recommended to be converted to the MV_CC_RegisterEventCallBackEx interface)，only support GEV devices，don‘t support USB and GenTL Device.
  *  @param  handle：设备句柄
  *  @param  cbEvent           [IN]      event callback pointer
  *  @param  pUser             [IN]      User defined value
@@ -1844,6 +1832,87 @@ MV_CAMCTRL_API int __stdcall MV_CAML_GetDeviceBauderate(IN void* handle,unsigned
  *  @remarks (This interface is abandoned, it is recommended to use the MV_CAML_GetSupportBaudrates)
 ************************************************************************/
 MV_CAMCTRL_API int __stdcall MV_CAML_GetSupportBauderates(IN void* handle,unsigned int* pnBaudrateAblity);
+
+
+
+/********************************************************************//**
+ *  @~chinese
+ *  @brief  保存图片，支持Bmp和Jpeg.
+ *  @param  handle                      [IN]            设备句柄
+ *  @param  pstSaveParam                [IN][OUT]       保存图片参数结构体
+ *  @return 成功，返回MV_OK；错误，返回错误码 
+ *  @remarks 通过将接口可以将从设备采集到的原始图像数据转换成JPEG或者BMP等格式并存放在指定内存中，然后用户可以将转换之后的数据直接保存成图片文件。
+             该接口调用无接口顺序要求，有图像源数据就可以进行转换，可以先调用MV_CC_GetOneFrameTimeout或者MV_CC_RegisterImageCallBackEx设置回调函数，获取一帧图像数据，然后再通过该接口转换格式。
+             MV_CC_SaveImageEx2比MV_CC_SaveImageEx增加参数handle，为了保证与其他接口的统一。
+ 
+ *  @~english
+ *  @brief  Save image, support Bmp and Jpeg.
+ *  @param  handle                      [IN]            Device handle
+ *  @param  pstSaveParam                [IN][OUT]       Save image parameters structure
+ *  @return Success, return MV_OK. Failure, return error code
+ *  @remarks Once there is image data, you can call this API to convert the data.
+             You can also call MV_CC_GetOneFrameTimeout or MV_CC_RegisterImageCallBackEx or MV_CC_GetImageBuffer to get one image frame and set the callback function, and then call this API to convert the format.
+             Comparing with the API MV_CC_SaveImageEx, this API added the parameter handle to ensure the unity with other API. 
+ ************************************************************************/
+MV_CAMCTRL_API int __stdcall MV_CC_SaveImageEx2(IN void* handle, MV_SAVE_IMAGE_PARAM_EX* pstSaveParam);
+
+
+/********************************************************************//**
+ *  @~chinese
+ *  @brief  保存图像到文件
+ *  @param  handle                      [IN]            设备句柄
+ *  @param  pstSaveFileParam            [IN][OUT]       保存图片文件参数结构体
+ *  @return 成功，返回MV_OK；错误，返回错误码 
+ *  @remarks 该接口支持BMP/JPEG/PNG/TIFF。
+ 
+ *  @~english
+ *  @brief  Save the image file.
+ *  @param  handle                      [IN]            Device handle
+ *  @param  pstSaveFileParam            [IN][OUT]       Save the image file parameter structure
+ *  @return Success, return MV_OK. Failure, return error code
+ *  @remarks This API support BMP/JPEG/PNG/TIFF.
+ ************************************************************************/
+MV_CAMCTRL_API int __stdcall MV_CC_SaveImageToFile(IN void* handle, MV_SAVE_IMG_TO_FILE_PARAM* pstSaveFileParam);
+
+
+/********************************************************************//**
+ *  @~chinese
+ *  @brief  像素格式转换
+ *  @param  handle                      [IN]            设备句柄
+ *  @param  pstCvtParam                 [IN][OUT]       像素格式转换参数结构体
+ *  @return 成功，返回MV_OK；错误，返回错误码 
+ *  @remarks 通过将接口可以将从设备采集到的原始图像数据转换成用户所需的像素格式并存放在指定内存中。
+             该接口调用无接口顺序要求，有图像源数据就可以进行转换，可以先调用MV_CC_GetOneFrameTimeout或者MV_CC_RegisterImageCallBackEx设置回调函数，
+             获取一帧图像数据，然后再通过该接口转换格式。如果设备当前采集图像是JPEG压缩的格式，则不支持调用该接口进行转换。
+ 
+ *  @~english
+ *  @brief  Pixel format conversion
+ *  @param  handle                      [IN]            Device handle
+ *  @param  pstCvtParam                 [IN][OUT]       Convert Pixel Type parameter structure
+ *  @return Success, return MV_OK. Failure, return error code
+ *  @remarks This API is used to transform the collected original data to pixel format and save to specified memory. 
+             There is no order requirement to call this API, the transformation will execute when there is image data. 
+             First call MV_CC_GetOneFrameTimeout or MV_CC_RegisterImageCallBackEx to set callback function, and get a frame of image data,
+             then call this API to transform the format.
+ ************************************************************************/
+MV_CAMCTRL_API int __stdcall MV_CC_ConvertPixelType(IN void* handle, IN OUT MV_CC_PIXEL_CONVERT_PARAM* pstCvtParam);
+
+/********************************************************************//**
+*  @~chinese
+*  @brief  设置SDK日志路径
+*  @param  strSDKLogPath      [IN]   SDK日志路径
+*  @return 成功，返回MV_OK；错误，返回错误码
+*  @remarks 设置路径之后，可以指定路径存放日志, V2.4.1版本新增日志服务，开启服务之后该接口无效，默认日志服务为开启状态。
+
+*  @~english
+*  @brief  Set SDK log path
+*  @param  strSDKLogPath             [IN]           SDK log path
+*  @return Access, return true. Not access, return false
+*  @remarks For version V2.4.1, added log service, this API is invalid when the service is enabled.And The logging service is enabled by default
+            This API is used to set the log file storing path.
+************************************************************************/
+MV_CAMCTRL_API int __stdcall MV_CC_SetSDKLogPath(IN const char * strSDKLogPath);
+
 
 #ifdef __cplusplus
 }
