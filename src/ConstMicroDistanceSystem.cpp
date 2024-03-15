@@ -28,9 +28,16 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 {
-    delete ui; 
+    delete ui;
+    delete this->cam;
 }
 
 void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
     std::cout << "image get!" << std::endl;
+
+    cv::Mat imgShow;
+    cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
+    QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
+
+    ui->label->setPixmap(QPixmap::fromImage(qimg));
 }

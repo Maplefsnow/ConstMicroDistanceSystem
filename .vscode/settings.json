@@ -4,6 +4,7 @@
         "qmainwindow": "cpp",
         "qdialog": "cpp",
         "qapplication": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "qvariant": "cpp"
     },
 }
