@@ -36,8 +36,16 @@ void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
     std::cout << "image get!" << std::endl;
 
     cv::Mat imgShow;
+
+    cv::resize(image, imgShow, cv::Size(1024, 768));
+
+    cv::imshow("qwq", imgShow);
+    cv::waitKey(1);
+
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
+
+    
 
     ui->label->setPixmap(QPixmap::fromImage(qimg));
 }

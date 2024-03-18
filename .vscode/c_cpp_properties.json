@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "${vcpkgRoot}/x64-windows/include",
                 "${vcpkgRoot}/x86-windows/include",
-                "C:/Program Files (x86)/Windows Kits/10/Include/",
+                "C:/Program Files (x86)/Windows Kits/10/Include/**",
                 "${workspaceFolder}/**/*",
                 "${workspaceFolder}/include",
                 "D:/Qt/6.6.2/mingw_64/include/**",
