@@ -8,7 +8,6 @@ void record(Camera* cam, QString path, void* pUser) {
     cv::VideoWriter writer(path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 20, size, false);
 
     while(camRecorder->status()) {
-        std::cout << "Recorder get image!" << std::endl;
         writer.write(cam->getOneImageWait());
         cv::waitKey(30);
     }
@@ -28,8 +27,6 @@ CamRecorder::~CamRecorder() {
 }
 
 void CamRecorder::run() {
-    std::cout << "Recorder run!" << std::endl;
-
     std::thread recordTrd(record, this->cam, this->path, this);
     recordTrd.detach();
 }

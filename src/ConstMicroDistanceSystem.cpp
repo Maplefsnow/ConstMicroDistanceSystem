@@ -2,6 +2,7 @@
 #include "MVSCamera/MvCameraControl.h"
 #include "Advmot/AdvMotApi.h"
 #include <opencv2/opencv.hpp>
+#include <QMessageBox>
 
 ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     : QMainWindow(parent)
@@ -32,12 +33,7 @@ ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 }
 
 void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
-    std::cout << "image get!" << std::endl;
-
     cv::Mat imgShow; 
-
-    // cv::imshow("qwq", image);
-    // cv::waitKey(1);
 
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
@@ -58,20 +54,25 @@ void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
 void ConstMicroDistanceSystem::onTakePhotoClicked() {
     QString path = this->photoSavePath + "/" + QString::number(this->photoNum++) + ".jpg";
 
-    std::cout << path.toStdString() << std::endl;
+    cv::Mat image;
+    if(!this->cam->getOneImageOrFail(image)){
+        QMessageBox::critical(this, "错误", "缓冲区内无图像，请先开始采集。", QMessageBox::Ok);
+        return;
+    }
 
     cv::imwrite(path.toStdString(), this->cam->getOneImageWait());
 }
 
 void ConstMicroDistanceSystem::onSwitchRecordClicked() {
-    QString path = this->videoSavePath + "/" + QString::number(this->videoNum++) + ".avi";
-
     if(this->is_recording) {
         this->camRecorder->stop();
         this->camRecorder = nullptr;
         this->ui->pushButton_switchRecord->setText(QString("开始录制"));
         this->is_recording = false;
+
+        QMessageBox::information(this, "录制完成", "录制完成，视频文件存放在 " + this->videoSavePath, QMessageBox::Ok);
     } else {
+        QString path = this->videoSavePath + "/" + QString::number(this->videoNum++) + ".avi";
         this->camRecorder = new CamRecorder(this->cam, path);
         this->camRecorder->start();
         this->ui->pushButton_switchRecord->setText(QString("停止录制"));
