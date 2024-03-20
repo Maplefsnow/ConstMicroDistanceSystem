@@ -4,15 +4,14 @@
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
 struct CameraParam {
-    char exposureAutoTmp[5] = "Once";
-    char pixelFormatTmp[6] = "Mono8";
-
-    int width = 800;
-    int height = 600;
+    int width = 1536;
+    int height = 1024;
+    int h_binning = 2;
+    int v_binning = 2;
     float exposureTime = 30000.0;
-    char* exposureAuto = exposureAutoTmp;
     int triggerMode = 0;
-    char* pixelFormat = pixelFormatTmp;
+    char* exposureAuto = "Once";
+    char* pixelFormat = "Mono8";
 };
 
 
@@ -23,15 +22,18 @@ public:
     ~Camera();
 
     void startGrab();
+    void stopGrab();
     void registerImageCallback(void(*cbk)(unsigned char* pData, MV_FRAME_OUT_INFO_EX *pstFrameInfo, void* pUser));
     void registerImageCallback(const CallbackFunctionType &cbk);
     void setParams(CameraParam params);
 
     void* getHandle() { return this->handle; };
     unsigned int getPayloadSize() { return this->payloadSize; };
+    bool getGrabStatus() { return this->is_grabbing; };
     CallbackFunctionType cbk;
 
 private:
     void* handle;
     unsigned int payloadSize;
+    bool is_grabbing = false;
 };

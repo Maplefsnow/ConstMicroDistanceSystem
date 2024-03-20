@@ -58,7 +58,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabCamParam">
      <attribute name="title">
@@ -345,6 +345,32 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="pushButton_switchGrab">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>开始采集</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_takePhoto">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>拍照</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -360,8 +386,88 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="actionphoto_location"/>
+    <addaction name="actionvideo_location"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
+  <action name="actionaa">
+   <property name="text">
+    <string>aa</string>
+   </property>
+  </action>
+  <action name="actionphoto_location">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>图片保存位置</string>
+   </property>
+  </action>
+  <action name="actionvideo_location">
+   <property name="text">
+    <string>视频保存位置</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton_switchGrab</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onSwitchCamGrabClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>376</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>723</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionphoto_location</sender>
+   <signal>triggered()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onPhotoLocationTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>683</x>
+     <y>427</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_takePhoto</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onTakePhotoClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>545</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>571</x>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onSwitchCamGrabClicked()</slot>
+  <slot>onTakePhotoClicked()</slot>
+  <slot>onPhotoLocationTriggered()</slot>
+ </slots>
 </ui>

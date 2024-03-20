@@ -50,6 +50,7 @@ Camera::Camera(int index) {
 }
 
 Camera::~Camera() {
+    this->is_grabbing = false;
     MV_CC_CloseDevice(this->handle);
     MV_CC_DestroyHandle(this->handle);
 }
@@ -64,12 +65,22 @@ void Camera::registerImageCallback(const CallbackFunctionType &cbk) {
 }
 
 void Camera::startGrab() {
+    if(this->is_grabbing) return;
     throwError(MV_CC_StartGrabbing(this->handle), "Start grabbing fail!");
+    this->is_grabbing = true;
+}
+
+void Camera::stopGrab() {
+    if(!this->is_grabbing) return;
+    throwError(MV_CC_StopGrabbing(this->handle), "Stop grabbing fail!");
+    this->is_grabbing = false;
 }
 
 void Camera::setParams(CameraParam params) {
     throwError(MV_CC_SetWidth(this->handle, params.width), "Set Width fail!");
     throwError(MV_CC_SetHeight(this->handle, params.height), "Set Height fail!");
+    throwError(MV_CC_SetEnumValue(this->handle, "BinningHorizontal", params.h_binning), "Set BinningHorizontal fail!");
+    throwError(MV_CC_SetEnumValue(this->handle, "BinningVertical", params.v_binning), "Set BinningVertical fail!");
     throwError(MV_CC_SetExposureTime(this->handle, params.exposureTime), "Set ExposureTime fail!");
     throwError(MV_CC_SetEnumValueByString(this->handle, "ExposureAuto", params.exposureAuto), "Set ExposureAuto fail!");
     throwError(MV_CC_SetTriggerMode(this->handle, params.triggerMode), "Set TriggerMode fail!");
