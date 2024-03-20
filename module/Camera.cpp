@@ -114,8 +114,14 @@ cv::Mat Camera::getOneImageWait() {
     std::unique_lock<std::mutex> lock(this->buffer_mutex);
     this->cond.wait(lock, [&](){ return !this->imageBuffer.empty(); });
     cv::Mat image = this->imageBuffer.front();
-
-    if(this->imageBuffer.size() > 1) this->imageBuffer.pop();
-
+    this->imageBuffer.pop();
     return image;
+}
+
+bool Camera::getOneImageOrFail(cv::Mat &image) {
+    std::lock_guard<std::mutex> lock(this->buffer_mutex);
+    if(this->imageBuffer.empty()) return false;
+    image = this->imageBuffer.front();
+    this->imageBuffer.pop();
+    return true;
 }

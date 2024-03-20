@@ -34,7 +34,7 @@ public:
 
     void pushBuffer(cv::Mat image);
     cv::Mat getOneImageWait();
-    bool getOneImage();
+    bool getOneImageOrFail(cv::Mat &image);
 
     void* getHandle() { return this->handle; };
     int getImageWidth();
