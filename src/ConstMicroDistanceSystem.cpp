@@ -36,8 +36,8 @@ void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
 
     cv::Mat imgShow; 
 
-    cv::imshow("qwq", image);
-    cv::waitKey(1);
+    // cv::imshow("qwq", image);
+    // cv::waitKey(1);
 
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
@@ -56,15 +56,42 @@ void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
 }
 
 void ConstMicroDistanceSystem::onTakePhotoClicked() {
-    
+    QString path = this->photoSavePath + "/" + QString::number(this->photoNum++) + ".jpg";
+
+    std::cout << path.toStdString() << std::endl;
+
+    cv::imwrite(path.toStdString(), this->cam->getOneImageWait());
+}
+
+void ConstMicroDistanceSystem::onSwitchRecordClicked() {
+    QString path = this->videoSavePath + "/" + QString::number(this->videoNum++) + ".avi";
+
+    if(this->is_recording) {
+        this->camRecorder->stop();
+        this->camRecorder = nullptr;
+        this->ui->pushButton_switchRecord->setText(QString("开始录制"));
+        this->is_recording = false;
+    } else {
+        this->camRecorder = new CamRecorder(this->cam, path);
+        this->camRecorder->start();
+        this->ui->pushButton_switchRecord->setText(QString("停止录制"));
+        this->is_recording = true;
+    }
 }
 
 void ConstMicroDistanceSystem::onPhotoLocationTriggered() {
     QString path = QFileDialog::getExistingDirectory(this, "选择保存文件夹", QDir::homePath());
     if(!path.isEmpty()) {
         this->photoSavePath = path;
+    } else {
+        return ;
+    }
+}
 
-        std::cout << path.toStdString() << std::endl;
+void ConstMicroDistanceSystem::onVideoLocationTriggered() {
+    QString path = QFileDialog::getExistingDirectory(this, "选择保存文件夹", QDir::homePath());
+    if(!path.isEmpty()) {
+        this->videoSavePath = path;
     } else {
         return ;
     }

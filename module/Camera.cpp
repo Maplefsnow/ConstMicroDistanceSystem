@@ -21,6 +21,7 @@ void cameraCallback(unsigned char* pData, MV_FRAME_OUT_INFO_EX *pstFrameInfo, vo
 
     cv::Mat image = cv::Mat(pstFrameInfo->nHeight, pstFrameInfo->nWidth, CV_8UC1, pData);
 
+    camera->pushBuffer(image);
     camera->cbk(image);
 }
 
@@ -76,6 +77,18 @@ void Camera::stopGrab() {
     this->is_grabbing = false;
 }
 
+int Camera::getImageWidth() {
+    MVCC_INTVALUE_EX stIntEx = {0};
+    throwError(MV_CC_GetIntValueEx(this->handle, "Width", &stIntEx), "Get Width fail!");
+    return stIntEx.nCurValue;
+}
+
+int Camera::getImageHeight() {
+    MVCC_INTVALUE_EX stIntEx = {0};
+    throwError(MV_CC_GetIntValueEx(this->handle, "Height", &stIntEx), "Get Height fail!");
+    return stIntEx.nCurValue;
+}
+
 void Camera::setParams(CameraParam params) {
     throwError(MV_CC_SetWidth(this->handle, params.width), "Set Width fail!");
     throwError(MV_CC_SetHeight(this->handle, params.height), "Set Height fail!");
@@ -85,4 +98,24 @@ void Camera::setParams(CameraParam params) {
     throwError(MV_CC_SetEnumValueByString(this->handle, "ExposureAuto", params.exposureAuto), "Set ExposureAuto fail!");
     throwError(MV_CC_SetTriggerMode(this->handle, params.triggerMode), "Set TriggerMode fail!");
     throwError(MV_CC_SetEnumValueByString(this->handle, "PixelFormat", params.pixelFormat), "Set PixelFormat fail!");
+}
+
+void Camera::pushBuffer(cv::Mat image) {
+    std::lock_guard<std::mutex> lock(this->buffer_mutex);
+    this->imageBuffer.push(image);
+    this->cond.notify_one();
+
+    if(this->imageBuffer.size() > 5) {
+        this->imageBuffer.pop();
+    }
+}
+
+cv::Mat Camera::getOneImageWait() {
+    std::unique_lock<std::mutex> lock(this->buffer_mutex);
+    this->cond.wait(lock, [&](){ return !this->imageBuffer.empty(); });
+    cv::Mat image = this->imageBuffer.front();
+
+    if(this->imageBuffer.size() > 1) this->imageBuffer.pop();
+
+    return image;
 }

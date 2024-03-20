@@ -19,19 +19,19 @@ find_package(OpenCV REQUIRED) # OpenCV
 aux_source_directory(./src srcs)
 aux_source_directory(./include includes)
 aux_source_directory(./module modules)
+aux_source_directory(./tasks tasks)
 
 # Specify MSVC UTF-8 encoding   
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 include_directories(include ${OpenCV_INCLUDE_DIRS})
-message("opencv include dirs: " ${OpenCV_INCLUDE_DIRS})
 
 link_directories(${OpenCV_DIR} ./lib)
 
 add_executable(${PROJECT_NAME}
     # WIN32 # If you need a terminal for debug, please comment this statement 
-    ${modules} ${srcs} 
+    ${modules} ${tasks} ${srcs} 
 ) 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets # Qt6 Shared Library
                                               ${OpenCV_LIBS}

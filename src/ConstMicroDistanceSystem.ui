@@ -371,6 +371,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <string>拍照</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_switchRecord">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>开始录像</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -464,10 +477,44 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_switchRecord</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onSwitchRecordClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>645</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>712</x>
+     <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionvideo_location</sender>
+   <signal>triggered()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onVideoLocationTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>683</x>
+     <y>427</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSwitchCamGrabClicked()</slot>
   <slot>onTakePhotoClicked()</slot>
   <slot>onPhotoLocationTriggered()</slot>
+  <slot>onSwitchRecordClicked()</slot>
+  <slot>onVideoLocationTriggered()</slot>
  </slots>
 </ui>
