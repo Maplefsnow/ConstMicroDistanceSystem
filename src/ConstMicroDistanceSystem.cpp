@@ -24,10 +24,15 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     }
     
     this->cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
+
+    this->imageProcessor = new ImageProcessor(this->cam);
+    this->imageProcessor->start();
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 {
+    this->imageProcessor->stop();
+
     delete ui;
     delete this->cam;
 }

@@ -7,6 +7,7 @@
 #include "module/Axis.h"
 #include "module/Camera.h"
 #include "tasks/CamRecorder.h"
+#include "tasks/ImageProcessor.h"
 
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
@@ -21,6 +22,7 @@ private:
     Ui_ConstMicroDistanceSystem* ui;
     Camera* cam;
     CamRecorder* camRecorder;
+    ImageProcessor* imageProcessor;
 
     void cbk(cv::Mat const& image);
 

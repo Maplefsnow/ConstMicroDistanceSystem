@@ -17,10 +17,7 @@ void record(Camera* cam, QString path, void* pUser) {
 
 CamRecorder::CamRecorder() {}
 
-CamRecorder::CamRecorder(Camera* cam, QString path) {
-    this->cam = cam;
-    this->path = path;
-}
+CamRecorder::CamRecorder(Camera* cam, QString path) : cam(cam), path(path) {}
 
 CamRecorder::~CamRecorder() {
     delete this->cam;
