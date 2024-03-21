@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5) # CMake install : https://cmake.org/download
 project(ConstMicroDistanceSystem LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_PREFIX_PATH "d:/Qt/6.6.2/mingw_64") # Qt Kit Dir
 set(OpenCV_DIR "D:/OpenCV-4.9.0/build/x64/mingw/install") # OpenCV Dir
 
@@ -20,6 +21,7 @@ aux_source_directory(./src srcs)
 aux_source_directory(./include includes)
 aux_source_directory(./module modules)
 aux_source_directory(./tasks tasks)
+aux_source_directory(./utils utils)
 
 # Specify MSVC UTF-8 encoding   
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
@@ -31,7 +33,7 @@ link_directories(${OpenCV_DIR} ./lib)
 
 add_executable(${PROJECT_NAME}
     # WIN32 # If you need a terminal for debug, please comment this statement 
-    ${modules} ${tasks} ${srcs} 
+    ${modules} ${tasks} ${utils} ${srcs} 
 ) 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets # Qt6 Shared Library
                                               ${OpenCV_LIBS}

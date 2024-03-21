@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${vcpkgRoot}/x64-windows/include",
-                "${vcpkgRoot}/x86-windows/include",
+                // "${vcpkgRoot}/x64-windows/include",
+                // "${vcpkgRoot}/x86-windows/include",
                 "C:/Program Files (x86)/Windows Kits/10/Include/**",
                 "C:/msys64/ucrt64/include/**",
                 // "D:/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.39.33519/include/**",

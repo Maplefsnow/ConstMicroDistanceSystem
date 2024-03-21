@@ -2,6 +2,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
@@ -32,7 +33,7 @@
             "name": "QtBuild",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${command:cmake.launchTargetPath}",
+            "program": "${workspaceFolder}/build/ConstMicroDistanceSystem.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
@@ -42,7 +43,7 @@
                     "value": "d:/Qt/6.6.2/mingw_64/bin"
                 }
             ],
-            "externalConsole": false,
+            "externalConsole": true,
             "miDebuggerPath": "D:\\Qt\\Tools\\mingw1120_64\\bin\\gdb.exe",
             "visualizerFile": "c:\\Users\\aicter\\AppData\\Roaming\\Code\\User\\workspaceStorage\\eb7992c23068865f0988fbd4de157aa1\\tonka3000.qtvsctools\\qt.natvis.xml"
         }
