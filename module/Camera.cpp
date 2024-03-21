@@ -19,7 +19,7 @@ int nRet = 0;
 void cameraCallback(unsigned char* pData, MV_FRAME_OUT_INFO_EX *pstFrameInfo, void* pUser) {
     Camera* camera = (Camera*) pUser;
 
-    cv::Mat image = cv::Mat(pstFrameInfo->nHeight, pstFrameInfo->nWidth, CV_8UC1, pData);
+    cv::Mat image = cv::Mat(pstFrameInfo->nHeight, pstFrameInfo->nWidth, CV_8UC3, pData);
 
     camera->pushBuffer(image);
     camera->cbk(image);
@@ -52,6 +52,7 @@ Camera::Camera(int index) {
 
 Camera::~Camera() {
     this->is_grabbing = false;
+
     MV_CC_CloseDevice(this->handle);
     MV_CC_DestroyHandle(this->handle);
 }
@@ -101,27 +102,15 @@ void Camera::setParams(CameraParam params) {
 }
 
 void Camera::pushBuffer(cv::Mat image) {
-    std::lock_guard<std::mutex> lock(this->buffer_mutex);
     this->imageBuffer.push(image);
-    this->cond.notify_one();
-
-    if(this->imageBuffer.size() > 5) {
-        this->imageBuffer.pop();
-    }
 }
 
 cv::Mat Camera::getOneImageWait() {
-    std::unique_lock<std::mutex> lock(this->buffer_mutex);
-    this->cond.wait(lock, [&](){ return !this->imageBuffer.empty(); });
-    cv::Mat image = this->imageBuffer.front();
-    this->imageBuffer.pop();
+    cv::Mat image;
+    this->imageBuffer.wait_and_pop(image);
     return image;
 }
 
 bool Camera::getOneImageOrFail(cv::Mat &image) {
-    std::lock_guard<std::mutex> lock(this->buffer_mutex);
-    if(this->imageBuffer.empty()) return false;
-    image = this->imageBuffer.front();
-    this->imageBuffer.pop();
-    return true;
+    return this->imageBuffer.try_pop(image);
 }

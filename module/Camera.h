@@ -1,10 +1,8 @@
 #pragma once
 
 #include "MVSCamera/MvCameraControl.h"
+#include "utils/ThreadSafeQueue.h"
 #include <opencv2/opencv.hpp>
-#include <queue>
-#include <mutex>
-#include <condition_variable>
 
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
@@ -16,7 +14,7 @@ struct CameraParam {
     float exposureTime = 30000.0;
     int triggerMode = 0;    
     char* exposureAuto = "Once";
-    char* pixelFormat = "Mono8";
+    char* pixelFormat = "BGR8Packed";
 };
 
 
@@ -47,7 +45,5 @@ private:
     void* handle;
     unsigned int payloadSize;
     bool is_grabbing = false;
-    std::queue<cv::Mat> imageBuffer;
-    std::mutex buffer_mutex;
-    std::condition_variable cond;
+    ThreadSafeQueue<cv::Mat> imageBuffer = ThreadSafeQueue<cv::Mat>(5);
 };
