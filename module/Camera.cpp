@@ -78,6 +78,12 @@ void Camera::stopGrab() {
     this->is_grabbing = false;
 }
 
+void Camera::closeCam() {
+    this->is_grabbing = false;
+    MV_CC_CloseDevice(this->handle);
+    MV_CC_DestroyHandle(this->handle);
+}
+
 int Camera::getImageWidth() {
     MVCC_INTVALUE_EX stIntEx = {0};
     throwError(MV_CC_GetIntValueEx(this->handle, "Width", &stIntEx), "Get Width fail!");

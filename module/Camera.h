@@ -26,6 +26,7 @@ public:
 
     void startGrab();
     void stopGrab();
+    void closeCam();
     void registerImageCallback(void(*cbk)(unsigned char* pData, MV_FRAME_OUT_INFO_EX *pstFrameInfo, void* pUser));
     void registerImageCallback(const CallbackFunctionType &cbk);
     void setParams(CameraParam params);
