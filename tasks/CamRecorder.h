@@ -8,7 +8,7 @@
 class CamRecorder {
 public:
     CamRecorder();
-    CamRecorder(Camera* cam, QString path);
+    CamRecorder(Camera* cam, QString path, int fps = 20);
     ~CamRecorder();
     void start() { this->run(); this->is_running = true; };
     void stop() { this->is_running = false; };
@@ -20,5 +20,6 @@ private:
 private:
     Camera* cam;
     QString path;
+    int fps = 20;
     bool is_running = false;
 };
