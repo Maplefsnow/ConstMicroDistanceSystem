@@ -5,7 +5,7 @@ void record(Camera* cam, QString path, void* pUser) {
 
     cv::Size size(cam->getImageWidth(), cam->getImageHeight());
 
-    cv::VideoWriter writer(path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 20, size, false);
+    cv::VideoWriter writer(path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 20, size);
 
     while(camRecorder->status()) {
         writer.write(cam->getOneImageWait());
