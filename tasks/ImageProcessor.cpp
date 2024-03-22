@@ -42,6 +42,9 @@ void process(Camera* cam, void* pUser) {
 
         Mat binary = getBinary(src);
 
+        imshow("processor", binary);
+        waitKey(1);
+
         processor->pushImageBuffer(binary);
     }
 }
@@ -51,7 +54,7 @@ ImageProcessor::ImageProcessor() {}
 ImageProcessor::ImageProcessor(Camera* cam) : cam(cam) {} 
 
 ImageProcessor::~ImageProcessor() {
-    delete this->cam;
+    this->is_running = false;
 }
 
 void ImageProcessor::run() {
