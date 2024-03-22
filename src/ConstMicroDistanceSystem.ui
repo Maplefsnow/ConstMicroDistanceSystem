@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1367</width>
-    <height>856</height>
+    <width>1111</width>
+    <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,8 +28,8 @@
      <rect>
       <x>320</x>
       <y>40</y>
-      <width>1024</width>
-      <height>768</height>
+      <width>761</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -48,10 +48,10 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>50</y>
+      <x>20</x>
+      <y>20</y>
       <width>241</width>
-      <height>291</height>
+      <height>421</height>
      </rect>
     </property>
     <property name="layoutDirection">
@@ -65,38 +65,125 @@
       <string>相机参数设定</string>
      </attribute>
      <layout class="QFormLayout" name="formLayout">
+      <property name="rowWrapPolicy">
+       <enum>QFormLayout::DontWrapRows</enum>
+      </property>
       <property name="horizontalSpacing">
-       <number>50</number>
+       <number>30</number>
       </property>
       <property name="verticalSpacing">
        <number>10</number>
       </property>
       <item row="0" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>选择相机</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboBox_selectCam"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_switchCam">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>打开相机</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+        <property name="default">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
          <string>Width</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="spinBox_7">
+        <property name="maximum">
+         <number>9999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Height</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spinBox_8">
+        <property name="maximum">
+         <number>9999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>曝光时间(μs)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>自动曝光</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="text">
+         <string>执行</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="text">
+         <string>图像格式</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QComboBox" name="comboBox_4"/>
+      </item>
+      <item row="8" column="0" colspan="2">
        <widget class="QPushButton" name="pushButton">
         <property name="text">
          <string>确定</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="spinBox_7"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="spinBox_8"/>
+      <item row="2" column="0" colspan="2">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -106,47 +193,19 @@
      </attribute>
      <layout class="QFormLayout" name="formLayout_2">
       <property name="horizontalSpacing">
-       <number>30</number>
+       <number>20</number>
       </property>
       <property name="verticalSpacing">
        <number>10</number>
       </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>PPU</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>PPU Denominator</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>确定</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>加速度</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
          <string>轴</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="3" column="1">
        <widget class="QComboBox" name="comboBox_2">
         <item>
          <property name="text">
@@ -175,7 +234,14 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>PPU</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
        <widget class="QSpinBox" name="spinBox">
         <property name="maximum">
          <number>999999</number>
@@ -185,7 +251,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>PPU Denominator</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <widget class="QSpinBox" name="spinBox_2">
         <property name="maximum">
          <number>999999</number>
@@ -195,28 +268,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>减速度</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>初速度</string>
-        </property>
-       </widget>
-      </item>
       <item row="6" column="0">
-       <widget class="QLabel" name="label_12">
+       <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>运行速度</string>
+         <string>加速度</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="6" column="1">
        <widget class="QSpinBox" name="spinBox_3">
         <property name="maximum">
          <number>999999</number>
@@ -226,7 +285,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>减速度</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
        <widget class="QSpinBox" name="spinBox_4">
         <property name="maximum">
          <number>999999</number>
@@ -236,7 +302,14 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>初速度</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
        <widget class="QSpinBox" name="spinBox_5">
         <property name="maximum">
          <number>999999</number>
@@ -246,7 +319,14 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>运行速度</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
        <widget class="QSpinBox" name="spinBox_6">
         <property name="maximum">
          <number>999999</number>
@@ -256,14 +336,75 @@
         </property>
        </widget>
       </item>
+      <item row="10" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>确定</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_16">
+        <property name="text">
+         <string>选择板卡</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboBox_5"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_5">
+        <property name="text">
+         <string>打开板卡</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>其他</string>
+     </attribute>
+     <layout class="QFormLayout" name="formLayout_4">
+      <property name="horizontalSpacing">
+       <number>30</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>10</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>电极丝直径(μm)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_6">
+        <property name="text">
+         <string>确定</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>360</y>
+      <x>10</x>
+      <y>510</y>
       <width>231</width>
       <height>121</height>
      </rect>
@@ -395,7 +536,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1367</width>
+     <width>1111</width>
      <height>21</height>
     </rect>
    </property>
@@ -509,6 +650,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_switchCam</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onSwitchCamClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>208</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>282</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSwitchCamGrabClicked()</slot>
@@ -516,5 +673,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <slot>onPhotoLocationTriggered()</slot>
   <slot>onSwitchRecordClicked()</slot>
   <slot>onVideoLocationTriggered()</slot>
+  <slot>onSwitchCamClicked()</slot>
  </slots>
 </ui>
