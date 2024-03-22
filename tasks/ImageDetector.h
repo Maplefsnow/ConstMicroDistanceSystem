@@ -10,8 +10,12 @@
 struct stDetectResult {
     cv::Point2f tubeCenter;
     float tubeRadius;
+    
     cv::Vec3f wireUpEdge;
     cv::Vec3f wireDownEdge;
+
+    float dis_TubeWire;
+    float dis_TubeCenterWire;
 };
 
 class ImageDetector {

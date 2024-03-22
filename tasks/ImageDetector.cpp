@@ -12,7 +12,7 @@ Vec3f getLineByPoint(Point2f p1, Point2f p2) {
 float getDisByLinePoint(Vec3f line, Point2f p) {
     float A = line[0], B = line[1], C = line[2];
     float x = p.x, y = p.y;
-    return (A*x + B*y + C) / (sqrt(A*A + B*B));
+    return abs(A*x + B*y + C) / (sqrt(A*A + B*B));
 }
 
 void splitContours(vector<vector<Point>> contours, vector<Point>& wireContour, vector<Point>& tubeContour) {
@@ -180,7 +180,7 @@ void detect(ImageProcessor* processor, void* pUser) {
     ImageDetector* detector = (ImageDetector*) pUser;
 
     Mat src;
-    stDetectResult detectResult;
+    stDetectResult result;
 
     while(detector->status()) {
         src = processor->getOneImageWait();
@@ -189,6 +189,8 @@ void detect(ImageProcessor* processor, void* pUser) {
 
         vector<vector<Point>> contours;
         findContours(src, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        if(contours.size() > 5) continue;  // 滤掉坏帧
 
         vector<Point> wireContour;  // the wire contour, approx, rectangle shape
         vector<Point> tubeContour;  // the tube contour, precise
@@ -199,21 +201,23 @@ void detect(ImageProcessor* processor, void* pUser) {
             continue;
         }
 
-        getWireEdges(wireContour, tubeContour, detectResult.wireUpEdge, detectResult.wireDownEdge);
+        getWireEdges(wireContour, tubeContour, result.wireUpEdge, result.wireDownEdge);
 
         Vec3f tubeCircle = getTubeFitCircle(tubeContour, imageWidth, imageHeight);
-        detectResult.tubeCenter = Point2f(tubeCircle[0], tubeCircle[1]);
-        detectResult.tubeRadius = tubeCircle[2];
+        result.tubeCenter = Point2f(tubeCircle[0], tubeCircle[1]);
+        result.tubeRadius = tubeCircle[2];
+
+        result.dis_TubeCenterWire = getDisByLinePoint(result.wireDownEdge, result.tubeCenter);
+        result.dis_TubeWire = result.dis_TubeCenterWire - result.tubeRadius;
     
-        detector->pushDetectResBuffer(detectResult);
+        detector->pushDetectResBuffer(result);
 
         ////////////////////////////////////////////
         Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
         cvtColor(src, src, COLOR_GRAY2BGR);
-        // ellipse(canvas, rrt, Scalar(255, 0, 0), 2);
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
-        printf("%.3f %.3f %.3f\n", tubeCircle[0], tubeCircle[1], tubeCircle[2]);
+        printf("distance: %.3fpx\n", result.dis_TubeWire);
 
         imshow("detect", canvas);
         waitKey(1);
@@ -222,7 +226,9 @@ void detect(ImageProcessor* processor, void* pUser) {
 }
 
 
-ImageDetector::~ImageDetector() {}
+ImageDetector::~ImageDetector() {
+    this->is_running = false;
+}
 
 ImageDetector::ImageDetector(ImageProcessor* processor) : processor(processor) {}
 
