@@ -27,11 +27,14 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
 
     this->imageProcessor = new ImageProcessor(this->cam);
     this->imageProcessor->start();
+    this->imageDetector = new ImageDetector(this->imageProcessor);
+    this->imageDetector->start();
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 {
     this->imageProcessor->stop();
+    this->imageDetector->stop();
 
     delete ui;
     delete this->cam;

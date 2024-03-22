@@ -7,14 +7,6 @@
 using namespace cv;
 
 
-struct stDetectResult {
-    cv::Point2f tubeCenter;
-    float tubeRadius;
-    cv::Vec3f wireUpEdge;
-    cv::Vec3f wireDownEdge;
-};
-
-
 class ImageProcessor {
 public:
     ImageProcessor();
@@ -25,7 +17,6 @@ public:
     bool status() { return this->is_running; };
 
     void pushImageBuffer(cv::Mat image) { this->processedImage.push(image); };
-    void pushDetectResBuffer(stDetectResult res) { this->detectRes.push(res); };
     cv::Mat getOneImageWait();
 
 private:
@@ -35,5 +26,4 @@ private:
     Camera* cam;
     bool is_running = false;
     ThreadSafeQueue<cv::Mat> processedImage = ThreadSafeQueue<cv::Mat>(5);
-    ThreadSafeQueue<stDetectResult> detectRes = ThreadSafeQueue<stDetectResult>(5);
 };

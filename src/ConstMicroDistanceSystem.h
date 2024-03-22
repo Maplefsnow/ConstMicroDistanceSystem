@@ -8,6 +8,7 @@
 #include "module/Camera.h"
 #include "tasks/CamRecorder.h"
 #include "tasks/ImageProcessor.h"
+#include "tasks/ImageDetector.h"
 
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
@@ -21,8 +22,10 @@ public:
 private:
     Ui_ConstMicroDistanceSystem* ui;
     Camera* cam;
+
     CamRecorder* camRecorder;
     ImageProcessor* imageProcessor;
+    ImageDetector* imageDetector;
 
     void cbk(cv::Mat const& image);
 
