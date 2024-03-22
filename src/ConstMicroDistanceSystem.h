@@ -21,7 +21,7 @@ public:
 
 private:
     Ui_ConstMicroDistanceSystem* ui;
-    Camera* cam;
+    Camera* cam = nullptr;
 
     CamRecorder* camRecorder;
     ImageProcessor* imageProcessor;
@@ -36,6 +36,7 @@ private:
     bool is_recording = false;
 
 public slots:
+    void onSwitchCamClicked();
     void onSwitchCamGrabClicked();
     void onPhotoLocationTriggered();
     void onVideoLocationTriggered();

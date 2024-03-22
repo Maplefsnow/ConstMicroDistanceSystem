@@ -10,31 +10,28 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
 {
     ui->setupUi(this);
 
-    CameraParam params;
+    int nRet = MV_OK;
 
-    try
-    {
-        this->cam = new Camera(0);
-        this->cam->setParams(params);
+    MV_CC_DEVICE_INFO_LIST stDeviceList;
+    memset(&stDeviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
+
+    MV_CC_EnumDevices(MV_GIGE_DEVICE | MV_USB_DEVICE, &stDeviceList);
+    if(stDeviceList.nDeviceNum == 0) {
+        QMessageBox::warning(this, "设备初始化警告", "未找到可用相机", QMessageBox::Ok);
+        this->ui->pushButton_switchCam->setEnabled(false);
     }
-    catch(const char* e)
-    {
-        std::cerr << e << '\n';
-        QMessageBox::information(this, "qwq", "qwq");
+    for(int i=0; i<stDeviceList.nDeviceNum; i++) {
+        this->ui->comboBox_selectCam->addItem(QString::number(i));
     }
     
-    this->cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
-
-    this->imageProcessor = new ImageProcessor(this->cam);
-    this->imageProcessor->start();
-    this->imageDetector = new ImageDetector(this->imageProcessor);
-    this->imageDetector->start();
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
 {
     this->imageProcessor->stop();
     this->imageDetector->stop();
+    this->camRecorder->stop();
+    this->cam->closeCam();
 
     delete ui;
     delete this->cam;
@@ -46,10 +43,37 @@ void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
 
-    ui->label->setPixmap(QPixmap::fromImage(qimg));
+    ui->label->setPixmap(QPixmap::fromImage(qimg).scaled(ui->label->size(), Qt::KeepAspectRatio));
+}
+
+void ConstMicroDistanceSystem::onSwitchCamClicked() {
+    if(this->cam == nullptr) {
+        int index = this->ui->comboBox_selectCam->currentIndex();
+        CameraParam params;
+
+        this->cam = new Camera(index);
+        this->cam->setParams(params);
+
+        this->cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
+
+        this->imageProcessor = new ImageProcessor(this->cam);
+        this->imageProcessor->start();
+        this->imageDetector = new ImageDetector(this->imageProcessor);
+        this->imageDetector->start();
+
+        this->ui->pushButton_switchCam->setText(QString("关闭相机"));
+    } else {
+        this->imageDetector->stop();
+        this->imageProcessor->stop();
+        this->cam->closeCam();
+        this->cam = nullptr;
+        this->ui->pushButton_switchCam->setText(QString("打开相机"));
+    }
 }
 
 void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
+    if(this->cam == nullptr) return;
+
     if(this->cam->getGrabStatus()) {
         this->cam->stopGrab();
         this->ui->pushButton_switchGrab->setText(QString("开始采集"));
@@ -60,6 +84,8 @@ void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
 }
 
 void ConstMicroDistanceSystem::onTakePhotoClicked() {
+    if(this->cam == nullptr) return;
+
     QString path = this->photoSavePath + "/" + QString::number(this->photoNum++) + ".jpg";
 
     cv::Mat image;
@@ -72,6 +98,8 @@ void ConstMicroDistanceSystem::onTakePhotoClicked() {
 }
 
 void ConstMicroDistanceSystem::onSwitchRecordClicked() {
+    if(this->cam == nullptr) return;
+
     if(this->is_recording) {
         this->camRecorder->stop();
         this->camRecorder = nullptr;
