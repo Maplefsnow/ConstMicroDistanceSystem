@@ -29,8 +29,8 @@ private:
 
     void cbk(cv::Mat const& image);
 
-    QString photoSavePath = "./Saved/photo";
-    QString videoSavePath = "./Saved/video";
+    QString photoSavePath = QDir::currentPath() + "/Saved/photo";
+    QString videoSavePath = QDir::currentPath() + "/Saved/video";
     int photoNum = 1;
     int videoNum = 1;
     bool is_recording = false;
