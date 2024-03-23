@@ -17,7 +17,7 @@ void record(Camera* cam, QString path, int fps, void* pUser) {
 
 CamRecorder::CamRecorder() {}
 
-CamRecorder::CamRecorder(Camera* cam, QString path, int fps = 20) : cam(cam), path(path), fps(fps) {}
+CamRecorder::CamRecorder(Camera* cam, QString path, int fps) : cam(cam), path(path), fps(fps) {}
 
 CamRecorder::~CamRecorder() {
     this->is_running = false;

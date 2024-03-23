@@ -29,7 +29,7 @@ void splitContours(vector<vector<Point>> contours, vector<Point>& wireContour, v
 
 void getWireEdges(vector<Point> wireContour, vector<Point> tubeContour, Vec3f& upEdge, Vec3f& downEdge) {
     vector<Vec3f> wireEdges;  // up and down edges of the wire (no order)
-    for(int i=0, j=0; i<4; i++) {
+    for(int i=0; i<4; i++) {
         Point2f p1 = wireContour[i]; Point2f p2 = wireContour[(i+1)%4];
         float dis = sqrt(pow((p1.x - p2.x), 2) + pow((p1.y - p2.y), 2));
         if(dis > 200.0){  // hack
@@ -190,7 +190,7 @@ void detect(ImageProcessor* processor, void* pUser) {
         vector<vector<Point>> contours;
         findContours(src, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
-        if(contours.size() > 5) continue;  // 滤掉坏帧
+        if(contours.size() < 2 || contours.size() > 5) continue;  // 滤掉坏帧
 
         vector<Point> wireContour;  // the wire contour, approx, rectangle shape
         vector<Point> tubeContour;  // the tube contour, precise
@@ -219,10 +219,14 @@ void detect(ImageProcessor* processor, void* pUser) {
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
         printf("distance: %.3fpx\n", result.dis_TubeWire);
 
+        drawContours(src, contours, -1, Scalar(255, 0, 0), 2);
+
         imshow("detect", canvas);
         waitKey(1);
         ////////////////////////////////////////////
     }
+
+    destroyWindow("detect");
 }
 
 
