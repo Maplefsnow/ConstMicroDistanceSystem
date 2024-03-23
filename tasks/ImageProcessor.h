@@ -12,7 +12,7 @@ public:
     ImageProcessor();
     ImageProcessor(Camera* cam);
     ~ImageProcessor();
-    void start() { this->run(); this->is_running = true; };
+    void start() { this->is_running = true; this->run(); };
     void stop() { this->is_running = false; };
     bool status() { return this->is_running; };
 

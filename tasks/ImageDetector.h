@@ -23,7 +23,7 @@ public:
     ImageDetector() {} ;
     ImageDetector(ImageProcessor* processor);
     ~ImageDetector();
-    void start() { this->run(); this->is_running = true; };
+    void start() { this->is_running = true; this->run(); };
     void stop() { this->is_running = false; };
     bool status() { return this->is_running; };
     void pushDetectResBuffer(stDetectResult res) { this->detectRes.push(res); };
