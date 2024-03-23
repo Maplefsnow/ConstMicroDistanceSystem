@@ -3,14 +3,18 @@ project(ConstMicroDistanceSystem LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -Wno-comment -Wno-sign-compare -Wno-write-strings -g2 -ggdb")
 set(CMAKE_PREFIX_PATH "d:/Qt/6.6.2/mingw_64") # Qt Kit Dir
 set(OpenCV_DIR "D:/OpenCV-4.9.0/build/x64/mingw/install") # OpenCV Dir
+set(QDEPLOY_EXE ${CMAKE_PREFIX_PATH}/bin/windeployqt6.exe) # windeployqt6 executable
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build/install/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/deploy)
 
 add_definitions(-D_STDCALL_SUPPORTED)
 
@@ -39,3 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets # Qt6 Shared Library
                                               ${OpenCV_LIBS}
                                               MvCameraControl.lib
                                               ADVMOT.lib) 
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${QDEPLOY_EXE} ARGS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.exe
+                   COMMENT "Qt deploying...")
