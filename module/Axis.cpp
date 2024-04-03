@@ -17,7 +17,7 @@ Axis::Axis(HAND devHand, USHORT num) {
 	if (devHand == 0) return;
 
 	throwError(Acm_AxOpen(devHand, num, &this->hand));
-	throwError(Acm_SetU32Property(this->hand, CFG_AxPulseOutMode, 2));
+	// throwError(Acm_SetU32Property(this->hand, CFG_AxPulseOutMode, 2));
 	throwError(Acm_AxSetCmdPosition(this->hand, 0.0));
 	throwError(Acm_AxSetActualPosition(this->hand, 0.0));
 
@@ -35,6 +35,8 @@ void Axis::relMove(DOUBLE distance) {
 	throwError(Acm_AxMoveRel(this->hand, distance));
 }
 
+/// @brief 
+/// @param dir 0: positive, 1:negative
 void Axis::contiMove(USHORT dir) {
 	throwError(Acm_AxMoveVel(this->hand, dir));
 }
@@ -68,6 +70,10 @@ void Axis::setVelParams(DOUBLE i_initVel, DOUBLE i_runningVel, DOUBLE i_acc, DOU
 	this->acc = i_acc;
 	this->dec = i_dec;
 	this->velMode = mode;
+}
+
+void Axis::setPulseOutMode(U32 val) {
+	throwError(Acm_SetU32Property(this->hand, CFG_AxPulseOutMode, val));
 }
 
 void Axis::setPPU(ULONG i_PPU) {

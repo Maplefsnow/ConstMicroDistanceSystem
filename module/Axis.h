@@ -17,6 +17,7 @@ public:
 	void stop();
 
 	void setVelParams(DOUBLE i_initVel, DOUBLE i_runningVel, DOUBLE i_acc, DOUBLE i_dec, DOUBLE mode = 0.0);
+	void setPulseOutMode(U32 val);
 	void setPPU(ULONG i_PPU, ULONG denominator);
 	void setPPU(ULONG i_PPU);
 	void setCmdPos(DOUBLE);
