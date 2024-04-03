@@ -6,6 +6,7 @@
 #include <QString>
 #include "module/Axis.h"
 #include "module/Camera.h"
+#include "module/MotionController.h"
 #include "tasks/CamRecorder.h"
 #include "tasks/ImageProcessor.h"
 #include "tasks/ImageDetector.h"
@@ -22,6 +23,10 @@ public:
 private:
     Ui_ConstMicroDistanceSystem* ui;
     Camera* cam = nullptr;
+    DEVLIST devList[20];
+    HAND advMotionDevHand = 0;
+
+    MotionController* motionController;
 
     CamRecorder* camRecorder;
     ImageProcessor* imageProcessor;
@@ -37,9 +42,11 @@ private:
 
 public slots:
     void onSwitchCamClicked();
+    void onSwitchCardClicked();
     void onSwitchCamGrabClicked();
     void onPhotoLocationTriggered();
     void onVideoLocationTriggered();
     void onTakePhotoClicked();
     void onSwitchRecordClicked();
+    void onTestClicked();
 };

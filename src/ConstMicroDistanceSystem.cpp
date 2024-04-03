@@ -6,8 +6,7 @@
 
 ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     : QMainWindow(parent)
-    , ui(new Ui_ConstMicroDistanceSystem)
-{
+    , ui(new Ui_ConstMicroDistanceSystem) {
     ui->setupUi(this);
 
     int nRet = MV_OK;
@@ -23,7 +22,17 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     for(int i=0; i<stDeviceList.nDeviceNum; i++) {
         this->ui->comboBox_selectCam->addItem(QString::number(i));
     }
-    
+
+    U32 devNum;
+    Acm_GetAvailableDevs(this->devList, 20, &devNum);
+
+    if(devNum == 0) {
+        QMessageBox::warning(this, "设备初始化警告", "未找到可用运动控制卡", QMessageBox::Ok);
+        this->ui->pushButton_switchCard->setEnabled(false);
+    }
+    for(int i=0; i<devNum; i++) {
+        this->ui->comboBox_selectCard->addItem(devList[i].szDeviceName);
+    }
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
@@ -71,7 +80,20 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
     }
 }
 
-void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
+void ConstMicroDistanceSystem::onSwitchCardClicked() {
+    if(this->advMotionDevHand == 0) {
+        int index = this->ui->comboBox_selectCard->currentIndex();
+        DWORD dwDevNum = this->devList[index].dwDeviceNum;
+        Acm_DevOpen(dwDevNum, &this->advMotionDevHand);
+        this->ui->pushButton_switchCard->setText(QString("关闭板卡"));
+    } else {
+        Acm_DevClose(&this->advMotionDevHand);
+        this->ui->pushButton_switchCard->setText(QString("打开板卡"));
+    }
+}
+
+void ConstMicroDistanceSystem::onSwitchCamGrabClicked()
+{
     if(this->cam == nullptr) return;
 
     if(this->cam->getGrabStatus()) {
@@ -114,6 +136,17 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
         this->ui->pushButton_switchRecord->setText(QString("停止录制"));
         this->is_recording = true;
     }
+}
+
+void ConstMicroDistanceSystem::onTestClicked() {
+    Axis axis2 = Axis(devHand, 2);
+
+    Axis axis4 = Axis(devHand, 4);
+    axis4.setPulseOutMode(1);
+
+    MotionController motioncontroller = MotionController(axis4, axis2);
+
+    motioncontroller.spinRel(1000);
 }
 
 void ConstMicroDistanceSystem::onPhotoLocationTriggered() {

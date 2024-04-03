@@ -58,7 +58,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabCamParam">
      <attribute name="title">
@@ -351,10 +351,10 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="comboBox_5"/>
+       <widget class="QComboBox" name="comboBox_selectCard"/>
       </item>
       <item row="1" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_5">
+       <widget class="QPushButton" name="pushButton_switchCard">
         <property name="text">
          <string>打开板卡</string>
         </property>
@@ -403,8 +403,8 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>510</y>
+      <x>20</x>
+      <y>540</y>
       <width>231</width>
       <height>121</height>
      </rect>
@@ -523,6 +523,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <property name="text">
      <string>开始录像</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_test">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>470</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>测试</string>
     </property>
    </widget>
   </widget>
@@ -666,6 +679,38 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_test</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onTestClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>502</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>502</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_switchCard</sender>
+   <signal>clicked()</signal>
+   <receiver>ConstMicroDistanceSystem</receiver>
+   <slot>onSwitchCardClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSwitchCamGrabClicked()</slot>
@@ -674,5 +719,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <slot>onSwitchRecordClicked()</slot>
   <slot>onVideoLocationTriggered()</slot>
   <slot>onSwitchCamClicked()</slot>
+  <slot>onTestClicked()</slot>
+  <slot>onSwitchCardClicked()</slot>
  </slots>
 </ui>
