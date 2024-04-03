@@ -26,6 +26,7 @@ aux_source_directory(./include includes)
 aux_source_directory(./module modules)
 aux_source_directory(./tasks tasks)
 aux_source_directory(./utils utils)
+aux_source_directory(./tests tests)
 
 # Specify MSVC UTF-8 encoding   
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
@@ -43,6 +44,20 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets # Qt6 Shared Library
                                               ${OpenCV_LIBS}
                                               MvCameraControl.lib
                                               ADVMOT.lib) 
+
+file(GLOB test_src_list tests/*.cpp)
+foreach(src ${test_src_list})
+    string(REGEX MATCH "tests/.*" relative_path ${src})
+    string(REGEX REPLACE "tests/" "" target_name ${relative_path})
+    string(REGEX REPLACE ".cpp" "" target_name ${target_name})
+    
+    add_executable(${target_name} ${src} ${modules})
+    target_link_libraries(${target_name} PRIVATE Qt6::Widgets # Qt6 Shared Library
+                                              ${OpenCV_LIBS}
+                                              MvCameraControl.lib
+                                              ADVMOT.lib) 
+endforeach()
+
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                    COMMAND ${QDEPLOY_EXE} ARGS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.exe
