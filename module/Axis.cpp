@@ -17,7 +17,6 @@ Axis::Axis(HAND devHand, USHORT num) {
 	if (devHand == 0) return;
 
 	throwError(Acm_AxOpen(devHand, num, &this->hand));
-	// throwError(Acm_SetU32Property(this->hand, CFG_AxPulseOutMode, 2));
 	throwError(Acm_AxSetCmdPosition(this->hand, 0.0));
 	throwError(Acm_AxSetActualPosition(this->hand, 0.0));
 
