@@ -26,7 +26,9 @@ public:
     void start() { this->is_running = true; this->run(); };
     void stop() { this->is_running = false; };
     bool status() { return this->is_running; };
+
     void pushDetectResBuffer(stDetectResult res) { this->detectRes.push(res); };
+    stDetectResult getDetectRes();
 
 private:
     void run();

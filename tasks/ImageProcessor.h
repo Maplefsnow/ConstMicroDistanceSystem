@@ -4,8 +4,6 @@
 #include "utils/ThreadSafeQueue.h"
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
-
 
 class ImageProcessor {
 public:

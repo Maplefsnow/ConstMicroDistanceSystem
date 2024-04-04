@@ -1,7 +1,7 @@
 #include "ImageDetector.h"
 
 using namespace std;
-
+using namespace cv;
 
 Vec3f getLineByPoint(Point2f p1, Point2f p2) {
     float k = (p2.y - p1.y) / (p2.x - p1.x);
@@ -182,6 +182,8 @@ void detect(ImageProcessor* processor, void* pUser) {
     Mat src;
     stDetectResult result;
 
+    Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
+
     while(detector->status()) {
         src = processor->getOneImageWait();
 
@@ -213,13 +215,11 @@ void detect(ImageProcessor* processor, void* pUser) {
         detector->pushDetectResBuffer(result);
 
         ////////////////////////////////////////////
-        Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
+        
         cvtColor(src, src, COLOR_GRAY2BGR);
-        circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
+        // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
-        printf("distance: %.3fpx\n", result.dis_TubeWire);
-
-        drawContours(src, contours, -1, Scalar(255, 0, 0), 2);
+        // printf("distance: %.3fpx\n", result.dis_TubeWire);
 
         imshow("detect", canvas);
         waitKey(1);
@@ -235,6 +235,12 @@ ImageDetector::~ImageDetector() {
 }
 
 ImageDetector::ImageDetector(ImageProcessor* processor) : processor(processor) {}
+
+stDetectResult ImageDetector::getDetectRes() {
+    stDetectResult res;
+    this->detectRes.wait_and_pop(res);
+    return res;
+}
 
 void ImageDetector::run() {
     std::thread detectTrd(detect, this->processor, this);
