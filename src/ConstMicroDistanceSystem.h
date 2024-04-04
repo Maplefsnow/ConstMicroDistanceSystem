@@ -10,6 +10,7 @@
 #include "tasks/CamRecorder.h"
 #include "tasks/ImageProcessor.h"
 #include "tasks/ImageDetector.h"
+#include "tasks/ParamsFitter.h"
 
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
@@ -26,11 +27,12 @@ private:
     DEVLIST devList[20];
     HAND advMotionDevHand = 0;
 
-    MotionController* motionController;
+    MotionController* motionController = nullptr;
 
-    CamRecorder* camRecorder;
-    ImageProcessor* imageProcessor;
-    ImageDetector* imageDetector;
+    CamRecorder* camRecorder = nullptr;
+    ImageProcessor* imageProcessor = nullptr;
+    ImageDetector* imageDetector = nullptr;
+    ParamsFitter* paramsFitter = nullptr;
 
     void cbk(cv::Mat const& image);
 
@@ -49,4 +51,6 @@ public slots:
     void onTakePhotoClicked();
     void onSwitchRecordClicked();
     void onTestClicked();
+    void onGetParamsClicked();
+    void onDoFeedClicked();
 };

@@ -3,13 +3,14 @@
 #include "Advmot/AdvMotApi.h"
 #include <opencv2/opencv.hpp>
 #include <QMessageBox>
+#include <vector>
+
+using namespace std;
 
 ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui_ConstMicroDistanceSystem) {
     ui->setupUi(this);
-
-    int nRet = MV_OK;
 
     MV_CC_DEVICE_INFO_LIST stDeviceList;
     memset(&stDeviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
@@ -35,12 +36,11 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     }
 }
 
-ConstMicroDistanceSystem::~ConstMicroDistanceSystem()
-{
-    this->imageProcessor->stop();
-    this->imageDetector->stop();
-    this->camRecorder->stop();
-    this->cam->closeCam();
+ConstMicroDistanceSystem::~ConstMicroDistanceSystem() {
+    if(this->imageProcessor != nullptr) this->imageProcessor->stop();
+    if(this->imageDetector != nullptr) this->imageDetector->stop();
+    if(this->camRecorder != nullptr) this->camRecorder->stop();
+    if(this->cam != nullptr) this->cam->closeCam();
 
     delete ui;
     delete this->cam;
@@ -85,9 +85,17 @@ void ConstMicroDistanceSystem::onSwitchCardClicked() {
         int index = this->ui->comboBox_selectCard->currentIndex();
         DWORD dwDevNum = this->devList[index].dwDeviceNum;
         Acm_DevOpen(dwDevNum, &this->advMotionDevHand);
+
+        Axis spin = Axis(this->advMotionDevHand, 4);
+        spin.setPulseOutMode(1);
+        Axis vertical = Axis(this->advMotionDevHand, 2);
+        Axis tmp = Axis(this->advMotionDevHand, 0);
+        this->motionController = new MotionController(spin, vertical, tmp);
+
         this->ui->pushButton_switchCard->setText(QString("关闭板卡"));
     } else {
         Acm_DevClose(&this->advMotionDevHand);
+        this->motionController = nullptr;
         this->ui->pushButton_switchCard->setText(QString("打开板卡"));
     }
 }
@@ -139,14 +147,28 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
 }
 
 void ConstMicroDistanceSystem::onTestClicked() {
-    Axis axis2 = Axis(devHand, 2);
+    F64 centerArr[3], endPosArr[4]; U32 arrAxCnt = 3;
+    centerArr[0] = 2000;
+    centerArr[1] = 0;
+    centerArr[2] = 0;
 
-    Axis axis4 = Axis(devHand, 4);
-    axis4.setPulseOutMode(1);
+    endPosArr[0] = 0;
+    endPosArr[1] = 0;
+    endPosArr[2] = 100000;
+    endPosArr[3] = 100000;
 
-    MotionController motioncontroller = MotionController(axis4, axis2);
+    this->motionController->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 0);
+}
 
-    motioncontroller.spinRel(1000);
+void ConstMicroDistanceSystem::onGetParamsClicked() {
+    this->paramsFitter = new ParamsFitter(this->imageDetector, this->motionController);
+    this->paramsFitter->run();
+}
+
+void ConstMicroDistanceSystem::onDoFeedClicked() {
+    stMotionParams params = this->paramsFitter->getMotionParams();
+    cout << params.alpha << endl;
+    cout << params.fit_radius << endl;
 }
 
 void ConstMicroDistanceSystem::onPhotoLocationTriggered() {
