@@ -11,20 +11,20 @@ Mat getBinary(const Mat src) {
     GaussianBlur(src, img_blur, Size(7, 7), 0);
 
     Mat binary;
-    adaptiveThreshold(img_blur, binary, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 11, 4);
+    adaptiveThreshold(img_blur, binary, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 11, 4);
 
     Mat filter;
     bilateralFilter(binary, filter, 21, 9, 9);
 
     Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(20, 20));
 
-    Mat img_erode;
-    erode(filter, img_erode, kernel);
-
     Mat img_dilate;
-    dilate(img_erode, img_dilate, kernel);
+    dilate(filter, img_dilate, kernel);
 
-    bitwise_not(img_dilate, img_dilate);
+    Mat img_erode;
+    erode(img_dilate, img_erode, kernel);
+
+    // bitwise_not(img_dilate, img_dilate);
 
     return img_dilate;
 }
