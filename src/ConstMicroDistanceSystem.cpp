@@ -146,9 +146,44 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
     }
 }
 
+inline double getDisByLineLine(const cv::Vec3f line1, const cv::Vec3f line2) {
+    return abs(line1[2] - line2[2])/sqrt(line1[0]*line1[0] + line1[1]*line1[1]);
+}
+
 void ConstMicroDistanceSystem::onTestClicked() {
+    printf("Tested!\n");
+}
+
+void ConstMicroDistanceSystem::onGetParamsClicked() {
+    this->paramsFitter = new ParamsFitter(this->imageDetector, this->motionController);
+    this->paramsFitter->run();
+}
+
+void ConstMicroDistanceSystem::onDoFeedClicked() {
+    const double constDis = 200.0;  // um
+    const double realWireDia = 100.0;  // um
+
+    stMotionParams motionParams = this->paramsFitter->getMotionParams();
+    stDetectResult detectRes = this->imageDetector->getDetectRes();
+
+    double detectWireDia = getDisByLineLine(detectRes.wireUpEdge, detectRes.wireDownEdge);
+    double pxToReal = realWireDia/detectWireDia;  // decide the ratio scale
+
+    double tubeRadius = detectRes.tubeRadius*pxToReal;  //um
+    double fitCircleRadius = motionParams.fit_radius*pxToReal;  // um
+    double tubeCenterWireDis = detectRes.dis_TubeCenterWire*pxToReal;  // um
+
+    double feedOriginalDis = tubeRadius + constDis;
+    double feedActualDis = tubeCenterWireDis + fitCircleRadius*sin(motionParams.alpha);
+
+    this->motionController->spinSetCmdPos(motionParams.alpha);
+    this->motionController->spinAbs(0);
+    this->motionController->feedSetCmdPos(feedOriginalDis - feedActualDis);  // reverse direction due to definition
+    this->motionController->feedAbs(0);
+
+
     F64 centerArr[3], endPosArr[4]; U32 arrAxCnt = 3;
-    centerArr[0] = 2000;
+    centerArr[0] = 10 * fitCircleRadius;  // ppu
     centerArr[1] = 0;
     centerArr[2] = 0;
 
@@ -158,17 +193,6 @@ void ConstMicroDistanceSystem::onTestClicked() {
     endPosArr[3] = 100000;
 
     this->motionController->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 0);
-}
-
-void ConstMicroDistanceSystem::onGetParamsClicked() {
-    this->paramsFitter = new ParamsFitter(this->imageDetector, this->motionController);
-    this->paramsFitter->run();
-}
-
-void ConstMicroDistanceSystem::onDoFeedClicked() {
-    stMotionParams params = this->paramsFitter->getMotionParams();
-    cout << params.alpha << endl;
-    cout << params.fit_radius << endl;
 }
 
 void ConstMicroDistanceSystem::onPhotoLocationTriggered() {

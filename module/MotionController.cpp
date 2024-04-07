@@ -23,8 +23,11 @@ MotionController::MotionController(Axis spin, Axis feed, Axis tmp) {
     throwError(Acm_GpAddAxis(&this->groupHand, this->axisTmp.getHand()));
     throwError(Acm_GpAddAxis(&this->groupHand, this->axisFeed.getHand()));
 
-    throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelLow, 1000));
-    throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelHigh, 1000));
+    throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelLow, 500));
+    throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelHigh, 500));
+
+    this->feed_ready = true;
+    this->spin_ready = true;
 }
 
 void MotionController::spinRel(double rad) {
@@ -78,7 +81,7 @@ void MotionController::feedRel(double um) {
 
     this->feed_ready = false;
 
-    this->axisFeed.relMove(um * 5);
+    this->axisFeed.relMove(um * 10);
     while(this->axisFeed.getAxisStatus() != 1) ;
 
     this->feed_ready = true;
@@ -91,7 +94,7 @@ void MotionController::feedAbs(double um) {
 
     this->feed_ready = false;
 
-    this->axisFeed.absMove(um * 5);
+    this->axisFeed.absMove(um * 10);
     while(this->axisFeed.getAxisStatus() != 1) ;
 
     this->feed_ready = true;
@@ -99,7 +102,7 @@ void MotionController::feedAbs(double um) {
 }
 
 void MotionController::feedSetCmdPos(double um) {
-    this->axisFeed.setCmdPos(um * 5);
+    this->axisFeed.setCmdPos(um * 10);
 }
 
 void MotionController::stopFeed() {

@@ -58,7 +58,7 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabCamParam">
      <attribute name="title">
@@ -369,7 +369,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="tabOther">
      <attribute name="title">
       <string>其他</string>
      </attribute>

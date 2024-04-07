@@ -37,7 +37,7 @@ private:
     Axis axisTmp;
     HAND groupHand = HAND();
 
-    bool spin_ready = true;
+    bool spin_ready = false;
     bool feed_ready = false;
 
     std::condition_variable spinCv;
