@@ -2,6 +2,7 @@
 
 #include "module/Camera.h"
 #include "utils/ThreadSafeQueue.h"
+#include "ui_ConstMicroDistanceSystem.h"
 #include <opencv2/opencv.hpp>
 
 
@@ -24,4 +25,5 @@ private:
     Camera* cam;
     bool is_running = false;
     ThreadSafeQueue<cv::Mat> processedImage = ThreadSafeQueue<cv::Mat>(5);
+    Ui_ConstMicroDistanceSystem* ui;
 };

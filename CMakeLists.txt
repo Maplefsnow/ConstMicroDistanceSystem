@@ -32,7 +32,12 @@ aux_source_directory(./tests tests)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-include_directories(include ${OpenCV_INCLUDE_DIRS})
+file(GLOB tasks_header tasks/*.h)
+foreach(header ${tasks_header})
+    set_property(SOURCE ${header} PROPERTY SKIP_AUTOUIC ON)    
+endforeach()
+
+include_directories(include src ${OpenCV_INCLUDE_DIRS})
 
 link_directories(${OpenCV_DIR} ./lib)
 

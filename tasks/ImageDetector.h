@@ -2,6 +2,7 @@
 
 #include "ImageProcessor.h"
 #include "utils/ThreadSafeQueue.h"
+#include "ui_ConstMicroDistanceSystem.h"
 #include <thread>
 #include <vector>
 #include <opencv2/opencv.hpp>
@@ -21,7 +22,7 @@ struct stDetectResult {
 class ImageDetector {
 public:
     ImageDetector() {} ;
-    ImageDetector(ImageProcessor* processor);
+    ImageDetector(ImageProcessor* processor, Ui_ConstMicroDistanceSystem* ui);
     ~ImageDetector();
     void start() { this->is_running = true; this->run(); };
     void stop() { this->is_running = false; };
@@ -37,4 +38,5 @@ private:
     ImageProcessor* processor;
     bool is_running = false;
     ThreadSafeQueue<stDetectResult> detectRes = ThreadSafeQueue<stDetectResult>(5);
+    Ui_ConstMicroDistanceSystem* ui;
 };

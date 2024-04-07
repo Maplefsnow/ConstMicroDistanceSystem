@@ -80,9 +80,12 @@ ParamsFitter::~ParamsFitter() {
 }
 
 stMotionParams ParamsFitter::getMotionParams() {
-    stMotionParams motionParams;
-    this->params_queue.wait_and_pop(motionParams);
-    return motionParams;
+    stMotionParams params;
+    if(this->params_queue.try_pop(params)){
+        return params;
+    } else {
+        return this->motionParams;
+    }
 }
 
 void ParamsFitter::run() {

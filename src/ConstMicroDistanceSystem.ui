@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1111</width>
-    <height>716</height>
+    <height>751</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -495,6 +495,32 @@
     </property>
     <property name="invertedAppearance">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>680</y>
+      <width>53</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>distance:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_distance">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>680</y>
+      <width>53</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
   </widget>

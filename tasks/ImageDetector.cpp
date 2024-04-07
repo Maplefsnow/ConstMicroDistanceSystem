@@ -1,23 +1,9 @@
 #include "ImageDetector.h"
+#include "utils/GeometricCalc.cpp"
 
 using namespace std;
 using namespace cv;
-
-inline Vec3f getLineByPoint(Point2f p1, Point2f p2) {
-    float k = (p2.y - p1.y) / (p2.x - p1.x);
-    float b = p1.y - k*(p1.x);
-    return Vec3f(k, -1.0, b);
-}
-
-inline float getDisByLinePoint(Vec3f line, Point2f p) {
-    float A = line[0], B = line[1], C = line[2];
-    float x = p.x, y = p.y;
-    return abs(A*x + B*y + C) / (sqrt(A*A + B*B));
-}
-
-inline double getDisByLineLine(const cv::Vec3f line1, const cv::Vec3f line2) {
-    return abs(line1[2] - line2[2])/sqrt(line1[0]*line1[0] + line1[1]*line1[1]);
-}
+using namespace GC;
 
 void splitContours(vector<vector<Point>> contours, vector<Point>& wireContour, vector<Point>& tubeContour) {
     for(int i=0; i<contours.size(); i++) {
@@ -180,7 +166,7 @@ Vec3f getTubeFitCircle(vector<Point> tubeContour, int imageWidth, int imageHeigh
     return Vec3f(x, y, r);
 }
 
-void detect(ImageProcessor* processor, void* pUser) {
+void detect(ImageProcessor* processor, void* pUser, Ui_ConstMicroDistanceSystem* ui) {
     ImageDetector* detector = (ImageDetector*) pUser;
 
     Mat src;
@@ -220,18 +206,19 @@ void detect(ImageProcessor* processor, void* pUser) {
 
         ////////////////////////////////////////////
         
-        cvtColor(src, src, COLOR_GRAY2BGR);
+        // cvtColor(src, src, COLOR_GRAY2BGR);
         // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
-        circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
-        printf("distance: %.3fpx\n", result.dis_TubeWire);
+        // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
+        // printf("distance: %.3fpx\n", result.dis_TubeWire);
+        ui->label_distance->setText(QString::number(result.dis_TubeWire) + " px");
         printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
 
-        imshow("detect", canvas);
-        waitKey(1);
+        // imshow("detect", canvas);
+        // waitKey(1);
         ////////////////////////////////////////////
     }
 
-    destroyWindow("detect");
+    // destroyWindow("detect");
 }
 
 
@@ -239,7 +226,7 @@ ImageDetector::~ImageDetector() {
     this->is_running = false;
 }
 
-ImageDetector::ImageDetector(ImageProcessor* processor) : processor(processor) {}
+ImageDetector::ImageDetector(ImageProcessor* processor, Ui_ConstMicroDistanceSystem* ui) : processor(processor), ui(ui) {}
 
 stDetectResult ImageDetector::getDetectRes() {
     stDetectResult res;
@@ -248,6 +235,6 @@ stDetectResult ImageDetector::getDetectRes() {
 }
 
 void ImageDetector::run() {
-    std::thread detectTrd(detect, this->processor, this);
+    std::thread detectTrd(detect, this->processor, this, this->ui);
     detectTrd.detach();
 }

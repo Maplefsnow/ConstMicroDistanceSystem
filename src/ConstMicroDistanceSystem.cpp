@@ -67,7 +67,7 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
 
         this->imageProcessor = new ImageProcessor(this->cam);
         this->imageProcessor->start();
-        this->imageDetector = new ImageDetector(this->imageProcessor);
+        this->imageDetector = new ImageDetector(this->imageProcessor, this->ui);
         this->imageDetector->start();
 
         this->ui->pushButton_switchCam->setText(QString("关闭相机"));
@@ -139,7 +139,7 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
         QMessageBox::information(this, "录制完成", "录制完成，视频文件存放在 " + this->videoSavePath, QMessageBox::Ok);
     } else {
         QString path = this->videoSavePath + "/" + QString::number(this->videoNum++) + ".avi";
-        this->camRecorder = new CamRecorder(this->cam, path);
+        this->camRecorder = new CamRecorder(this->cam, path, this->ui);
         this->camRecorder->start();
         this->ui->pushButton_switchRecord->setText(QString("停止录制"));
         this->is_recording = true;

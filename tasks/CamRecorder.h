@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ui_ConstMicroDistanceSystem.h"
 #include "module/Camera.h"
 #include <opencv2/opencv.hpp>
 #include <QString>
@@ -8,7 +9,7 @@
 class CamRecorder {
 public:
     CamRecorder();
-    CamRecorder(Camera* cam, QString path, int fps = 20);
+    CamRecorder(Camera* cam, QString path, Ui_ConstMicroDistanceSystem* ui, int fps = 20);
     ~CamRecorder();
     void start() { this->is_running = true; this->run(); };
     void stop() { this->is_running = false; };
@@ -22,4 +23,5 @@ private:
     QString path;
     int fps = 20;
     bool is_running = false;
+    Ui_ConstMicroDistanceSystem* ui;
 };

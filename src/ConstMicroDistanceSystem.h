@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ui_ConstMicroDistanceSystem.h"
 #include <QMainWindow>
 #include <QMessageBox>
