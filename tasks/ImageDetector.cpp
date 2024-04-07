@@ -3,16 +3,20 @@
 using namespace std;
 using namespace cv;
 
-Vec3f getLineByPoint(Point2f p1, Point2f p2) {
+inline Vec3f getLineByPoint(Point2f p1, Point2f p2) {
     float k = (p2.y - p1.y) / (p2.x - p1.x);
     float b = p1.y - k*(p1.x);
     return Vec3f(k, -1.0, b);
 }
 
-float getDisByLinePoint(Vec3f line, Point2f p) {
+inline float getDisByLinePoint(Vec3f line, Point2f p) {
     float A = line[0], B = line[1], C = line[2];
     float x = p.x, y = p.y;
     return abs(A*x + B*y + C) / (sqrt(A*A + B*B));
+}
+
+inline double getDisByLineLine(const cv::Vec3f line1, const cv::Vec3f line2) {
+    return abs(line1[2] - line2[2])/sqrt(line1[0]*line1[0] + line1[1]*line1[1]);
 }
 
 void splitContours(vector<vector<Point>> contours, vector<Point>& wireContour, vector<Point>& tubeContour) {
@@ -219,7 +223,8 @@ void detect(ImageProcessor* processor, void* pUser) {
         cvtColor(src, src, COLOR_GRAY2BGR);
         // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
-        // printf("distance: %.3fpx\n", result.dis_TubeWire);
+        printf("distance: %.3fpx\n", result.dis_TubeWire);
+        printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
 
         imshow("detect", canvas);
         waitKey(1);

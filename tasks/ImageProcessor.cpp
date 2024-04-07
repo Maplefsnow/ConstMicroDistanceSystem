@@ -24,9 +24,7 @@ Mat getBinary(const Mat src) {
     Mat img_erode;
     erode(img_dilate, img_erode, kernel);
 
-    // bitwise_not(img_dilate, img_dilate);
-
-    return img_dilate;
+    return img_erode;
 }
 
 void process(Camera* cam, void* pUser) {
@@ -42,8 +40,8 @@ void process(Camera* cam, void* pUser) {
 
         Mat binary = getBinary(src);
 
-        imshow("processor", binary);
-        waitKey(1);
+        // imshow("processor", binary);
+        // waitKey(1);
 
         processor->pushImageBuffer(binary);
     }
