@@ -21,7 +21,8 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
         this->ui->pushButton_switchCam->setEnabled(false);
     }
     for(int i=0; i<stDeviceList.nDeviceNum; i++) {
-        this->ui->comboBox_selectCam->addItem(QString::number(i));
+        char* tmp = (char*) stDeviceList.pDeviceInfo[i]->SpecialInfo.stUsb3VInfo.chModelName;
+        this->ui->comboBox_selectCam->addItem(QString::fromUtf8(tmp));
     }
 
     U32 devNum;
@@ -67,7 +68,7 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
 
         this->imageProcessor = new ImageProcessor(this->cam);
         this->imageProcessor->start();
-        this->imageDetector = new ImageDetector(this->imageProcessor, this->ui);
+        this->imageDetector = new ImageDetector(this->imageProcessor, 100.0, this->ui);  // TODO: set variable of realWireDia or else
         this->imageDetector->start();
 
         this->ui->pushButton_switchCam->setText(QString("关闭相机"));
@@ -160,39 +161,8 @@ void ConstMicroDistanceSystem::onGetParamsClicked() {
 }
 
 void ConstMicroDistanceSystem::onDoFeedClicked() {
-    const double constDis = 200.0;  // um
-    const double realWireDia = 100.0;  // um
-
-    stMotionParams motionParams = this->paramsFitter->getMotionParams();
-    stDetectResult detectRes = this->imageDetector->getDetectRes();
-
-    double detectWireDia = getDisByLineLine(detectRes.wireUpEdge, detectRes.wireDownEdge);
-    double pxToReal = realWireDia/detectWireDia;  // decide the ratio scale
-
-    double tubeRadius = detectRes.tubeRadius*pxToReal;  //um
-    double fitCircleRadius = motionParams.fit_radius*pxToReal;  // um
-    double tubeCenterWireDis = detectRes.dis_TubeCenterWire*pxToReal;  // um
-
-    double feedOriginalDis = tubeRadius + constDis;
-    double feedActualDis = tubeCenterWireDis + fitCircleRadius*sin(motionParams.alpha);
-
-    this->motionController->spinSetCmdPos(motionParams.alpha);
-    this->motionController->spinAbs(0);
-    this->motionController->feedSetCmdPos(feedOriginalDis - feedActualDis);  // reverse direction due to definition
-    this->motionController->feedAbs(0);
-
-
-    F64 centerArr[3], endPosArr[4]; U32 arrAxCnt = 3;
-    centerArr[0] = 10 * fitCircleRadius;  // ppu
-    centerArr[1] = 0;
-    centerArr[2] = 0;
-
-    endPosArr[0] = 0;
-    endPosArr[1] = 0;
-    endPosArr[2] = 100000;
-    endPosArr[3] = 100000;
-
-    this->motionController->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 0);
+    this->feedExecutor = new FeedExecutor(this->motionController, this->paramsFitter, this->imageDetector, 200.0, this->ui);
+    this->feedExecutor->doFeed();
 }
 
 void ConstMicroDistanceSystem::onPhotoLocationTriggered() {

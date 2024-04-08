@@ -12,6 +12,7 @@
 #include "tasks/ImageProcessor.h"
 #include "tasks/ImageDetector.h"
 #include "tasks/ParamsFitter.h"
+#include "tasks/FeedExecutor.h"
 
 using CallbackFunctionType = std::function<void(cv::Mat const&)>;
 
@@ -34,6 +35,7 @@ private:
     ImageProcessor* imageProcessor = nullptr;
     ImageDetector* imageDetector = nullptr;
     ParamsFitter* paramsFitter = nullptr;
+    FeedExecutor* feedExecutor = nullptr;
 
     void cbk(cv::Mat const& image);
 
