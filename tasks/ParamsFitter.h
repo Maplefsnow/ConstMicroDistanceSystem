@@ -9,7 +9,7 @@
 
 struct stMotionParams {
     double alpha;
-    double fit_radius;
+    double fit_radius;  // um
 };
 
 

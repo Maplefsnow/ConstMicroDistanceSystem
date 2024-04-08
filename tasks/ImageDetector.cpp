@@ -166,7 +166,7 @@ Vec3f getTubeFitCircle(vector<Point> tubeContour, int imageWidth, int imageHeigh
     return Vec3f(x, y, r);
 }
 
-void detect(ImageProcessor* processor, void* pUser, Ui_ConstMicroDistanceSystem* ui) {
+void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_ConstMicroDistanceSystem* ui) {
     ImageDetector* detector = (ImageDetector*) pUser;
 
     Mat src;
@@ -197,10 +197,17 @@ void detect(ImageProcessor* processor, void* pUser, Ui_ConstMicroDistanceSystem*
 
         Vec3f tubeCircle = getTubeFitCircle(tubeContour, imageWidth, imageHeight);
         result.tubeCenter = Point2f(tubeCircle[0], tubeCircle[1]);
-        result.tubeRadius = tubeCircle[2];
+        result.tubeRadius = tubeCircle[2];  // px
 
-        result.dis_TubeCenterWire = getDisByLinePoint(result.wireDownEdge, result.tubeCenter);
-        result.dis_TubeWire = result.dis_TubeCenterWire - result.tubeRadius;
+        result.dis_TubeCenterWire = getDisByLinePoint(result.wireDownEdge, result.tubeCenter);  // px
+        result.dis_TubeWire = result.dis_TubeCenterWire - result.tubeRadius;  // px
+
+        double pxToUm = realWireDia/getDisByLineLine(result.wireUpEdge, result.wireDownEdge);
+        detector->setPxToUm(pxToUm);
+
+        result.tubeRadius *= pxToUm;  // um
+        result.dis_TubeCenterWire *= pxToUm;  // um
+        result.dis_TubeWire *= pxToUm;  // um
     
         detector->pushDetectResBuffer(result);
 
@@ -210,7 +217,8 @@ void detect(ImageProcessor* processor, void* pUser, Ui_ConstMicroDistanceSystem*
         // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
         // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
         // printf("distance: %.3fpx\n", result.dis_TubeWire);
-        ui->label_distance->setText(QString::number(result.dis_TubeWire) + " px");
+
+        ui->label_distance->setText(QString::number(result.dis_TubeWire) + " um");
         printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
 
         // imshow("detect", canvas);
@@ -226,7 +234,8 @@ ImageDetector::~ImageDetector() {
     this->is_running = false;
 }
 
-ImageDetector::ImageDetector(ImageProcessor* processor, Ui_ConstMicroDistanceSystem* ui) : processor(processor), ui(ui) {}
+ImageDetector::ImageDetector(ImageProcessor* processor, double realWireDia, Ui_ConstMicroDistanceSystem* ui) 
+    : processor(processor), ui(ui), realWireDia(realWireDia) {}
 
 stDetectResult ImageDetector::getDetectRes() {
     stDetectResult res;
@@ -235,6 +244,6 @@ stDetectResult ImageDetector::getDetectRes() {
 }
 
 void ImageDetector::run() {
-    std::thread detectTrd(detect, this->processor, this, this->ui);
+    std::thread detectTrd(detect, this->processor, this, this->realWireDia, this->ui);
     detectTrd.detach();
 }

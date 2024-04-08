@@ -9,6 +9,8 @@ using namespace std;
 void doFit(ImageDetector *detector, MotionController* motionController, ParamsFitter* fitter) {
     cv::Mat canvas = cv::Mat::zeros(cv::Size(1000,1000), CV_8UC3);
 
+    double pxToUm = detector->getPxToUm();
+
     const int point_num = 16;
     stDetectResult detectRes[point_num]; vector<cv::Point2f> points;
     for(int i=0; i<point_num; i++) {
@@ -61,7 +63,7 @@ void doFit(ImageDetector *detector, MotionController* motionController, ParamsFi
     float y0 = detectResNow.tubeCenter.y;
 
     stMotionParams params;
-    params.fit_radius = r;
+    params.fit_radius = r * pxToUm;
     params.alpha = -atan((y0-y)/(x0-x));
     fitter->pushMotionParams(params);
 
@@ -82,6 +84,7 @@ ParamsFitter::~ParamsFitter() {
 stMotionParams ParamsFitter::getMotionParams() {
     stMotionParams params;
     if(this->params_queue.try_pop(params)){
+        this->motionParams = params;
         return params;
     } else {
         return this->motionParams;

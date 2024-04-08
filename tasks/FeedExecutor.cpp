@@ -3,18 +3,13 @@
 
 using namespace GC;
 
-void execute(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, Ui_ConstMicroDistanceSystem *ui, const double constDis) {
-    const double realWireDia = 100.0;  // um
-
+void init(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem* ui, FeedExecutor* executor) {
     stMotionParams motionParams = fitter->getMotionParams();
     stDetectResult detectRes = detector->getDetectRes();
 
-    double detectWireDia = getDisByLineLine(detectRes.wireUpEdge, detectRes.wireDownEdge);
-    double pxToReal = realWireDia/detectWireDia;  // decide the ratio scale
-
-    double tubeRadius = detectRes.tubeRadius*pxToReal;  //um
-    double fitCircleRadius = motionParams.fit_radius*pxToReal;  // um
-    double tubeCenterWireDis = detectRes.dis_TubeCenterWire*pxToReal;  // um
+    double fitCircleRadius = motionParams.fit_radius;
+    double tubeRadius = detectRes.tubeRadius;
+    double tubeCenterWireDis = detectRes.dis_TubeCenterWire;
 
     double feedOriginalDis = tubeRadius + constDis;
     double feedActualDis = tubeCenterWireDis + fitCircleRadius*sin(motionParams.alpha);
@@ -24,9 +19,22 @@ void execute(MotionController* controller, ParamsFitter *fitter, ImageDetector *
     controller->feedSetCmdPos(feedOriginalDis - feedActualDis);  // reverse direction due to definition
     controller->feedAbs(0);
 
+    while(!(controller->getFeedStatus() && controller->getSpinStatus())) ;
+    ui->statusBar->showMessage("FeedExecutor: 初始化完成。", 2000);
+    executor->is_init = true;
+}
+
+void feedfunc(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem* ui, FeedExecutor* executor) {
+    if(!executor->is_init){
+        init(controller, fitter, detector, constDis, ui, executor);
+    }
+
+    stMotionParams motionParams = fitter->getMotionParams();
+
+    double fitCircleRadius = motionParams.fit_radius;
 
     F64 centerArr[3], endPosArr[4]; U32 arrAxCnt = 3;
-    centerArr[0] = 10 * fitCircleRadius;  // ppu
+    centerArr[0] = 10 * (fitCircleRadius + 2);  // ppu
     centerArr[1] = 0;
     centerArr[2] = 0;
 
@@ -38,15 +46,18 @@ void execute(MotionController* controller, ParamsFitter *fitter, ImageDetector *
     controller->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 0);
 }
 
-FeedExecutor::FeedExecutor()
-{
+FeedExecutor::FeedExecutor() {}
+
+FeedExecutor::FeedExecutor(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem *ui) 
+    : controller(controller), fitter(fitter), detector(detector), ui(ui), constDis(constDis) {
 }
 
-FeedExecutor::FeedExecutor(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, Ui_ConstMicroDistanceSystem *ui) 
-    : controller(controller), fitter(fitter), detector(detector), ui(ui)
-{
+void FeedExecutor::doInit() {
+    std::thread initTrd(init, this->controller, this->fitter, this->detector, this->constDis, this->ui, this);
+    initTrd.detach();
 }
 
-void FeedExecutor::run()
-{
+void FeedExecutor::doFeed() {
+    std::thread feedTrd(feedfunc, this->controller, this->fitter, this->detector, this->constDis, this->ui, this);
+    feedTrd.detach();
 }

@@ -8,18 +8,19 @@
 class FeedExecutor {
 public:
     FeedExecutor();
-    FeedExecutor(MotionController* controller, ParamsFitter* fitter, ImageDetector* detector, Ui_ConstMicroDistanceSystem* ui);
-    void start() { this->is_running = true; this->run(); };
-    void stop() { this->is_running = false; };
-    bool status() { return this->is_running; };
+    FeedExecutor(MotionController* controller, ParamsFitter* fitter, ImageDetector* detector, const double constDis, Ui_ConstMicroDistanceSystem* ui);
+
+    void doInit();
+    void doFeed();
+
+public:
+    bool is_init = false;
 
 private:
-    void run();
-
-private:
-    bool is_running = false;
     MotionController* controller = nullptr;
     ParamsFitter* fitter = nullptr;
     ImageDetector* detector = nullptr;
-    Ui_ConstMicroDistanceSystem* ui;
+    Ui_ConstMicroDistanceSystem* ui = nullptr;
+
+    double constDis;
 };
