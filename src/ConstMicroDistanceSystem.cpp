@@ -3,6 +3,7 @@
 #include "Advmot/AdvMotApi.h"
 #include <opencv2/opencv.hpp>
 #include <QMessageBox>
+#include <QSizePolicy>
 #include <vector>
 
 using namespace std;
@@ -35,6 +36,10 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     for(int i=0; i<devNum; i++) {
         this->ui->comboBox_selectCard->addItem(devList[i].szDeviceName);
     }
+
+    // ui->label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    ui->label->setScaledContents(false);
+    this->ui->pushButton_switchGrab->setEnabled(false);
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem() {
@@ -52,8 +57,9 @@ void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
 
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
+    qimg = qimg.scaled(ui->label->size() - QSize(4, 4), Qt::KeepAspectRatioByExpanding);
 
-    ui->label->setPixmap(QPixmap::fromImage(qimg).scaled(ui->label->size(), Qt::KeepAspectRatio));
+    ui->label->setPixmap(QPixmap::fromImage(qimg));
 }
 
 void ConstMicroDistanceSystem::onSwitchCamClicked() {
@@ -72,12 +78,14 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
         this->imageDetector->start();
 
         this->ui->pushButton_switchCam->setText(QString("关闭相机"));
+        this->ui->pushButton_switchGrab->setEnabled(true);
     } else {
         this->imageDetector->stop();
         this->imageProcessor->stop();
         this->cam->closeCam();
         this->cam = nullptr;
         this->ui->pushButton_switchCam->setText(QString("打开相机"));
+        this->ui->pushButton_switchGrab->setEnabled(false);
     }
 }
 

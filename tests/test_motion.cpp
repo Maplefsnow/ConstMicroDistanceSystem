@@ -2,7 +2,6 @@
 #include <thread>
 #include <math.h>
 #include <module/Axis.h>
-#include <module/Group.h>
 
 using namespace std;
 

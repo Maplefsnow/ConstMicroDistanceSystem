@@ -219,7 +219,7 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
         // printf("distance: %.3fpx\n", result.dis_TubeWire);
 
         ui->label_distance->setText(QString::number(result.dis_TubeWire) + " um");
-        printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
+        // printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
 
         // imshow("detect", canvas);
         // waitKey(1);
