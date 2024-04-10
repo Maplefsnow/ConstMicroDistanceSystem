@@ -20,6 +20,7 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     if(stDeviceList.nDeviceNum == 0) {
         QMessageBox::warning(this, "设备初始化警告", "未找到可用相机", QMessageBox::Ok);
         this->ui->pushButton_switchCam->setEnabled(false);
+        this->ui->comboBox_selectCam->addItem(QString("[no cam detected]"));
     }
     for(int i=0; i<stDeviceList.nDeviceNum; i++) {
         char* tmp = (char*) stDeviceList.pDeviceInfo[i]->SpecialInfo.stUsb3VInfo.chModelName;
@@ -32,6 +33,7 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     if(devNum == 0) {
         QMessageBox::warning(this, "设备初始化警告", "未找到可用运动控制卡", QMessageBox::Ok);
         this->ui->pushButton_switchCard->setEnabled(false);
+        this->ui->comboBox_selectCard->addItem(QString("[no card detected]"));
     }
     for(int i=0; i<devNum; i++) {
         this->ui->comboBox_selectCard->addItem(devList[i].szDeviceName);
@@ -57,7 +59,7 @@ void ConstMicroDistanceSystem::cbk(cv::Mat const& image) {
 
     cv::cvtColor(image, imgShow, cv::COLOR_BGR2RGB);
     QImage qimg((uchar*)imgShow.data, imgShow.cols, imgShow.rows, imgShow.step, QImage::Format_RGB888);
-    qimg = qimg.scaled(ui->label->size() - QSize(4, 4), Qt::KeepAspectRatioByExpanding);
+    qimg = qimg.scaled(ui->label->size() - QSize(5, 5), Qt::KeepAspectRatio);
 
     ui->label->setPixmap(QPixmap::fromImage(qimg));
 }
@@ -72,19 +74,15 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
 
         this->cam->registerImageCallback(CallbackFunctionType(std::bind(&ConstMicroDistanceSystem::cbk, this, std::placeholders::_1)));
 
-        this->imageProcessor = new ImageProcessor(this->cam);
-        this->imageProcessor->start();
-        this->imageDetector = new ImageDetector(this->imageProcessor, 100.0, this->ui);  // TODO: set variable of realWireDia or else
-        this->imageDetector->start();
-
         this->ui->pushButton_switchCam->setText(QString("关闭相机"));
         this->ui->pushButton_switchGrab->setEnabled(true);
     } else {
-        this->imageDetector->stop();
-        this->imageProcessor->stop();
+        if(this->imageDetector != nullptr) this->imageDetector->stop();
+        if(this->imageProcessor != nullptr) this->imageProcessor->stop();
         this->cam->closeCam();
         this->cam = nullptr;
         this->ui->pushButton_switchCam->setText(QString("打开相机"));
+        this->ui->pushButton_switchGrab->setText(QString("开始采集"));
         this->ui->pushButton_switchGrab->setEnabled(false);
     }
 }
@@ -118,6 +116,12 @@ void ConstMicroDistanceSystem::onSwitchCamGrabClicked()
         this->ui->pushButton_switchGrab->setText(QString("开始采集"));
     } else {
         this->cam->startGrab();
+
+        this->imageProcessor = new ImageProcessor(this->cam);
+        this->imageProcessor->start();
+        this->imageDetector = new ImageDetector(this->imageProcessor, 100.0, this->ui);  // @todo: set variable of realWireDia or else
+        this->imageDetector->start();
+
         this->ui->pushButton_switchGrab->setText(QString("停止采集"));
     }
 }
@@ -125,15 +129,15 @@ void ConstMicroDistanceSystem::onSwitchCamGrabClicked()
 void ConstMicroDistanceSystem::onTakePhotoClicked() {
     if(this->cam == nullptr) return;
 
-    QString path = this->photoSavePath + "/" + QString::number(this->photoNum++) + ".jpg";
-
     cv::Mat image;
-    if(!this->cam->getOneImageOrFail(image)){
-        QMessageBox::critical(this, "错误", "缓冲区内无图像，请先开始采集。", QMessageBox::Ok);
-        return;
-    }
 
-    cv::imwrite(path.toStdString(), this->cam->getOneImageWait());
+    if(this->cam->getOneImageWait(image)){
+        QString path = this->photoSavePath + "/" + QString::number(this->photoNum++) + ".jpg";
+        cv::imwrite(path.toStdString(), image);
+        this->ui->statusBar->showMessage("已拍摄照片", 500);
+    } else {
+        QMessageBox::critical(this, "错误", "缓冲区内无图像，请先开始采集。", QMessageBox::Ok);
+    }
 }
 
 void ConstMicroDistanceSystem::onSwitchRecordClicked() {
@@ -166,10 +170,10 @@ void ConstMicroDistanceSystem::onTestClicked() {
 void ConstMicroDistanceSystem::onGetParamsClicked() {
     this->paramsFitter = new ParamsFitter(this->imageDetector, this->motionController);
     this->paramsFitter->run();
+    this->feedExecutor = new FeedExecutor(this->motionController, this->paramsFitter, this->imageDetector, 300.0, this->ui);  // @todo: set to ui
 }
 
 void ConstMicroDistanceSystem::onDoFeedClicked() {
-    this->feedExecutor = new FeedExecutor(this->motionController, this->paramsFitter, this->imageDetector, 200.0, this->ui);
     this->feedExecutor->doFeed();
 }
 
