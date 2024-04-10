@@ -19,6 +19,7 @@ void doFit(ImageDetector *detector, MotionController* motionController, ParamsFi
         points.push_back(detectRes[i].tubeCenter);
         cv::circle(canvas, detectRes[i].tubeCenter, 2, cv::Scalar(0,0,255), 2);
         cv::imshow("fitter", canvas); cv::waitKey(1);
+        // fitter->ui->progressBar_fit->setValue(100/point_num*(i+1));
     }
 
     const int pt_len = points.size();
@@ -64,7 +65,8 @@ void doFit(ImageDetector *detector, MotionController* motionController, ParamsFi
 
     stMotionParams params;
     params.fit_radius = r * pxToUm;
-    params.alpha = -atan((y0-y)/(x0-x));
+    // params.alpha = -atan((y0-y)/(x0-x));
+    params.alpha = (y0>y) ? M_PI-atan((y0-y)/(x0-x)) : M_PI-atan((y0-y)/(x0-x));  // 
     fitter->pushMotionParams(params);
 
     cv::circle(canvas, cv::Point2f(x, y), r, cv::Scalar(255,0,255), 1);

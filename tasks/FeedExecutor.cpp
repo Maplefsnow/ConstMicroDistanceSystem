@@ -20,7 +20,6 @@ void init(MotionController* controller, ParamsFitter *fitter, ImageDetector *det
     controller->feedAbs(0);
 
     while(!(controller->getFeedStatus() && controller->getSpinStatus())) ;
-    ui->statusBar->showMessage("FeedExecutor: 初始化完成。", 2000);
     executor->is_init = true;
 }
 
@@ -34,7 +33,7 @@ void feedfunc(MotionController* controller, ParamsFitter *fitter, ImageDetector 
     double fitCircleRadius = motionParams.fit_radius;
 
     F64 centerArr[3], endPosArr[4]; U32 arrAxCnt = 3;
-    centerArr[0] = 10 * (fitCircleRadius + 2);  // ppu
+    centerArr[0] = 10 * (fitCircleRadius);  // ppu
     centerArr[1] = 0;
     centerArr[2] = 0;
 
@@ -43,7 +42,7 @@ void feedfunc(MotionController* controller, ParamsFitter *fitter, ImageDetector 
     endPosArr[2] = 100000;
     endPosArr[3] = 100000;
 
-    controller->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 0);
+    controller->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 1);
 }
 
 FeedExecutor::FeedExecutor() {}

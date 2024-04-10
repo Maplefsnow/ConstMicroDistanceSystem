@@ -23,11 +23,13 @@ public:
     void pushMotionParams(stMotionParams params) { this->params_queue.push(params); this->motionParams = params; };
     void run();
 
+public:
+    Ui_ConstMicroDistanceSystem* ui;
+
 private:
     ImageDetector* detector;
     MotionController* motionController;
 
     stMotionParams motionParams;
     ThreadSafeQueue<stMotionParams> params_queue = ThreadSafeQueue<stMotionParams>(1);
-    Ui_ConstMicroDistanceSystem* ui;
 };
