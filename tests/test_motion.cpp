@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <thread>
 #include <math.h>
 #include <module/Axis.h>
@@ -19,19 +20,12 @@ int main() {
     Axis axis4 = Axis(devHand, 4);
     axis4.setPulseOutMode(1);
 
-    HAND groupHand; U16 gpState;
-    Acm_GpAddAxis(&groupHand, axis2.getHand());
-    Acm_GpGetState(groupHand, &gpState);
-    cout << gpState << endl;
-
     axis2.setCmdPos(0);
+    while(!axis2.getAxisStatus()) ;
 
-    cout << "MOVING..." << endl;
-
-    int A = 3000, omega = 1, f = 64;
-    for(int i=0; i<f; i++) {
-        axis2.absMove( A * sin(omega * 3.14/(f/2) * i) );
-        while(axis2.getAxisStatus() != 1) ;
+    int num = 0;
+    while(scanf("%d", &num)){
+        axis2.absMove(num);
     }
 
     return 0;
