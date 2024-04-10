@@ -19,12 +19,14 @@ MotionController::MotionController(Axis spin, Axis feed, Axis tmp) {
     this->axisFeed = feed;
     this->axisTmp = tmp;
 
-    throwError(Acm_GpAddAxis(&this->groupHand, this->axisSpin.getHand()));
-    throwError(Acm_GpAddAxis(&this->groupHand, this->axisTmp.getHand()));
+    throwError(Acm_GpAddAxis(&this->groupHand, this->axisSpin.getHand()));  std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    throwError(Acm_GpAddAxis(&this->groupHand, this->axisTmp.getHand()));   std::this_thread::sleep_for(std::chrono::milliseconds(2));
     throwError(Acm_GpAddAxis(&this->groupHand, this->axisFeed.getHand()));
 
     throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelLow, 500));
     throwError(Acm_SetF64Property(this->groupHand, PAR_GpVelHigh, 500));
+
+    this->axisFeed.setVelParams(1000, 1000, 2000, 2000);
 
     this->feed_ready = true;
     this->spin_ready = true;
