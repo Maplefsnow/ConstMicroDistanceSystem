@@ -32,7 +32,7 @@ public:
     void setParams(CameraParam params);
 
     void pushBuffer(cv::Mat image);
-    cv::Mat getOneImageWait();
+    bool getOneImageWait(cv::Mat& image, int timeout = 1000);
     bool getOneImageOrFail(cv::Mat &image);
 
     void* getHandle() { return this->handle; };

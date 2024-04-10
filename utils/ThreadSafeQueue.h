@@ -26,11 +26,23 @@ public:
         cond.notify_one();
     }
  
-    void wait_and_pop(T& value) {
+    bool wait_and_pop(T& value, int timeout = 1000) {
         std::unique_lock<std::mutex> lock(mut);
-        cond.wait(lock, [&] { return !q.empty(); });
-        value = q.front();
-        q.pop();
+
+        if(timeout > 0) {
+            if(cond.wait_for(lock, std::chrono::milliseconds(timeout), [&]{ return !q.empty(); })){
+                value = q.front();
+                q.pop();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            cond.wait(lock, [&]{ return !q.empty(); });
+            value = q.front();
+            q.pop();
+            return true;
+        }
     }
  
     bool try_pop(T& value) {

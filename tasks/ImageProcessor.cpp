@@ -33,7 +33,7 @@ void process(Camera* cam, void* pUser) {
     Mat src;
 
     while(processor->status()) {
-        src = cam->getOneImageWait();
+        if(!cam->getOneImageWait(src)) continue;
 
         cvtColor(src, src, COLOR_BGR2GRAY);
         resize(src, src, Size(), 0.5, 0.5);

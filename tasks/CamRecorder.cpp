@@ -8,7 +8,9 @@ void record(Camera* cam, QString path, int fps, void* pUser, Ui_ConstMicroDistan
     cv::VideoWriter writer(path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, size);
 
     while(camRecorder->status()) {
-        writer.write(cam->getOneImageWait());
+        cv::Mat image;
+        cam->getOneImageWait(image);
+        writer.write(image);
         cv::waitKey(30);
     }
 

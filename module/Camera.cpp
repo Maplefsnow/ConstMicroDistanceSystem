@@ -111,10 +111,8 @@ void Camera::pushBuffer(cv::Mat image) {
     this->imageBuffer.push(image);
 }
 
-cv::Mat Camera::getOneImageWait() {
-    cv::Mat image;
-    this->imageBuffer.wait_and_pop(image);
-    return image;
+bool Camera::getOneImageWait(cv::Mat& image, int timeout) {
+    return this->imageBuffer.wait_and_pop(image, timeout);
 }
 
 bool Camera::getOneImageOrFail(cv::Mat &image) {
