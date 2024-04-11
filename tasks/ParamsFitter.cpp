@@ -65,8 +65,7 @@ void doFit(ImageDetector *detector, MotionController* motionController, ParamsFi
 
     stMotionParams params;
     params.fit_radius = r * pxToUm;
-    // params.alpha = -atan((y0-y)/(x0-x));
-    params.alpha = (y0>y) ? M_PI-atan((y0-y)/(x0-x)) : M_PI-atan((y0-y)/(x0-x));  // 
+    params.alpha = (x0<x) ? M_PI-atan((y0-y)/(x0-x)) : -atan((y0-y)/(x0-x));
     fitter->pushMotionParams(params);
 
     cv::circle(canvas, cv::Point2f(x, y), r, cv::Scalar(255,0,255), 1);
