@@ -55,7 +55,7 @@ RotatedRect getTubeFitEllipse(vector<Point> tubeContour, int imageWidth, int ima
 /// @param tubeContour 
 /// @param imageWidth 
 /// @param imageHeight 
-/// @return 
+/// @return vec3f(x, y, r)
 Vec3f getTubeFitCircle(vector<Point> tubeContour, int imageWidth, int imageHeight) {
     vector<Point> tubeConvex;
     convexHull(tubeContour, tubeConvex);
@@ -172,8 +172,6 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
     Mat src;
     stDetectResult result;
 
-    Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
-
     while(detector->status()) {
         src = processor->getOneImageWait();
 
@@ -195,7 +193,18 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
 
         getWireEdges(wireContour, tubeContour, result.wireUpEdge, result.wireDownEdge);
 
+        vector<Point> tubeConvex;  // convex of the tube contour, ignore points on image edges
+        convexHull(tubeContour, tubeConvex);
+        for(vector<Point>::iterator it = tubeConvex.begin(); it != tubeConvex.end();) {
+            if((*it).x < 10 || (*it).y < 10 || imageWidth-(*it).x < 10 || imageHeight-(*it).y < 10) {
+                it = tubeConvex.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
         Vec3f tubeCircle = getTubeFitCircle(tubeContour, imageWidth, imageHeight);
+
         result.tubeCenter = Point2f(tubeCircle[0], tubeCircle[1]);
         result.tubeRadius = tubeCircle[2];  // px
 
@@ -211,19 +220,21 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
     
         detector->pushDetectResBuffer(result);
 
-        ////////////////////////////////////////////
-        
-        // cvtColor(src, src, COLOR_GRAY2BGR);
-        // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
-        // circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
-        // printf("distance: %.3fpx\n", result.dis_TubeWire);
+#ifdef OPENCV_SHOW_IMAGES
+        Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
+        cvtColor(src, src, COLOR_GRAY2BGR);
+
+        for(Point p : tubeConvex) {
+            circle(canvas, p, 3, Scalar(0, 0, 255), 3);
+        }
+        circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
+        circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
+
+        imshow("detect", canvas);
+        waitKey(5);
+#endif
 
         ui->label_distance->setText(QString::number(result.dis_TubeWire) + " um");
-        // printf("wire dia: %.3fpx\n", getDisByLineLine(result.wireDownEdge, result.wireUpEdge));
-
-        // imshow("detect", canvas);
-        // waitKey(1);
-        ////////////////////////////////////////////
     }
 
     // destroyWindow("detect");

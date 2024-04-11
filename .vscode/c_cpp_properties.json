@@ -19,7 +19,8 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "_STDCALL_SUPPORTED"
+                "_STDCALL_SUPPORTED",
+                "OPENCV_SHOW_IMAGES"
             ],
             "windowsSdkVersion": "10.0.22621.0",
             "compilerPath": "cl.exe",

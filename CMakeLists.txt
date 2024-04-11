@@ -17,6 +17,7 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build/install/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/deploy)
 
 add_definitions(-D_STDCALL_SUPPORTED)
+add_definitions(-DOPENCV_SHOW_IMAGES)
 
 find_package(Qt6 COMPONENTS Widgets REQUIRED) # Qt COMPONENTS
 find_package(OpenCV REQUIRED) # OpenCV
