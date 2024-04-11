@@ -9,7 +9,7 @@ void record(Camera* cam, QString path, int fps, void* pUser, Ui_ConstMicroDistan
 
     while(camRecorder->status()) {
         cv::Mat image;
-        cam->getOneImageWait(image);
+        cam->getOneImageWait(image, 0);
         writer.write(image);
         cv::waitKey(30);
     }

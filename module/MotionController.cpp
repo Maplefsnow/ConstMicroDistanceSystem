@@ -118,7 +118,7 @@ void MotionController::addPath(U16 MoveCmd, U16 MoveMode, F64 FH, F64 FL, PF64 E
 }
 
 void MotionController::movePath() {
-    throwError(Acm_GpMovePath(this->groupHand, NULL));
+    throwError(Acm_GpMovePath(this->groupHand, 0));
 }
 
 void MotionController::moveCircle(PF64 CenterArray, PF64 EndArray, PU32 pArrayElements, I16 Direction) {
