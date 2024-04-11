@@ -2,6 +2,8 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <queue>
+#include <limits>
+#include <cmath>
 
 #ifndef IMAGE_PATH
 #define IMAGE_PATH "C:\\Users\\13297\\Pictures\\nachoneko-wallpaper.jpg"
