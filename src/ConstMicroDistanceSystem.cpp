@@ -40,8 +40,9 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
     }
 
     // ui->label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    ui->label->setScaledContents(false);
+    this->ui->label->setScaledContents(false);
     this->ui->pushButton_switchGrab->setEnabled(false);
+    this->ui->progressBar_fit->setRange(0, 100);
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem() {

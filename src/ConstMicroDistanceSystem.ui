@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1298</width>
+    <width>1172</width>
     <height>660</height>
    </rect>
   </property>
@@ -453,6 +453,13 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton_doFeed">
+         <property name="text">
+          <string>执行补偿</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QProgressBar" name="progressBar_fit">
          <property name="value">
@@ -463,13 +470,6 @@
          </property>
          <property name="invertedAppearance">
           <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="pushButton_doFeed">
-         <property name="text">
-          <string>执行补偿</string>
          </property>
         </widget>
        </item>
@@ -537,7 +537,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1298</width>
+     <width>1172</width>
      <height>21</height>
     </rect>
    </property>
