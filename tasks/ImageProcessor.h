@@ -4,6 +4,7 @@
 #include "utils/ThreadSafeQueue.h"
 #include "ui_ConstMicroDistanceSystem.h"
 #include <opencv2/opencv.hpp>
+#include <thread>
 
 
 class ImageProcessor {
@@ -20,10 +21,13 @@ public:
 
 private:
     void run();
+    void process();
 
 private:
     Camera* cam;
     bool is_running = false;
     ThreadSafeQueue<cv::Mat> processedImage = ThreadSafeQueue<cv::Mat>(5);
     Ui_ConstMicroDistanceSystem* ui;
+
+    std::thread* processTrd = nullptr;
 };

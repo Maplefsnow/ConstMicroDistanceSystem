@@ -126,5 +126,18 @@ void MotionController::moveCircle(PF64 CenterArray, PF64 EndArray, PU32 pArrayEl
 }
 
 void MotionController::move3DHelixRel(PF64 CenterArray, PF64 EndArray, PU32 pArrayElements, I16 Direction) {
+    std::unique_lock<std::mutex> lk_feed(this->feedCvMutex);
+    std::unique_lock<std::mutex> lk_spin(this->spinCvMutex);
+    this->feedCv.wait(lk_feed, [this](){ return this->getFeedStatus(); });
+    this->spinCv.wait(lk_spin, [this](){ return this->getSpinStatus(); });
+    this->feed_ready = false;
+    this->spin_ready = false;
+
     throwError(Acm_GpMoveHelixRel(this->groupHand, CenterArray, EndArray, pArrayElements, Direction));
+    while(this->axisFeed.getAxisStatus() != 1) ;
+
+    this->feed_ready = true;
+    this->spin_ready = true;
+    this->feedCv.notify_all();
+    this->spinCv.notify_all();
 }

@@ -17,6 +17,7 @@ public:
 
 private:
     void run();
+    void record();
 
 private:
     Camera* cam;
@@ -24,4 +25,6 @@ private:
     int fps = 20;
     bool is_running = false;
     Ui_ConstMicroDistanceSystem* ui;
+
+    std::thread* recordTrd = nullptr;
 };

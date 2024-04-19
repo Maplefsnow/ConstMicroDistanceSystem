@@ -37,6 +37,7 @@ public:
 
 private:
     void run();
+    void detect();
 
 private:
     ImageProcessor* processor;
@@ -47,4 +48,5 @@ private:
     double pxToUm = 0.0;
 
     std::mutex mtxPxToUm;
+    std::thread* detectTrd = nullptr;
 };

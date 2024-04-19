@@ -1,5 +1,4 @@
 #include "ImageProcessor.h"
-#include <thread>
 #include <vector>
 
 using namespace cv;
@@ -27,12 +26,10 @@ Mat getBinary(const Mat src) {
     return img_erode;
 }
 
-void process(Camera* cam, void* pUser) {
-    ImageProcessor* processor = (ImageProcessor*) pUser;
-
+void ImageProcessor::process() {
     Mat src;
 
-    while(processor->status()) {
+    while(this->is_running) {
         if(!cam->getOneImageWait(src)) continue;
 
         cvtColor(src, src, COLOR_BGR2GRAY);
@@ -40,11 +37,16 @@ void process(Camera* cam, void* pUser) {
 
         Mat binary = getBinary(src);
 
-        // imshow("processor", binary);
-        // waitKey(1);
-
-        processor->pushImageBuffer(binary);
+#ifdef OPENCV_SHOW_IMAGES
+        imshow("processor", binary);
+        waitKey(1);
+#endif
+        this->pushImageBuffer(binary);
     }
+
+#ifdef OPENCV_SHOW_IMAGES
+    destroyWindow("processor");
+#endif
 }
 
 ImageProcessor::ImageProcessor() {}
@@ -53,11 +55,12 @@ ImageProcessor::ImageProcessor(Camera* cam) : cam(cam) {}
 
 ImageProcessor::~ImageProcessor() {
     this->is_running = false;
+    this->processTrd->join();
 }
 
 void ImageProcessor::run() {
-    std::thread processTrd(process, this->cam, this);
-    processTrd.detach();
+    this->is_running = true;
+    this->processTrd = new std::thread(process, this);
 }
 
 Mat ImageProcessor::getOneImageWait() {

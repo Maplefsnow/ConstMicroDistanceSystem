@@ -40,28 +40,11 @@ bool getWireEdges(vector<Point> wireContour, vector<Point> tubeContour, Vec3f& u
     return true;
 }
 
-
-RotatedRect getTubeFitEllipse(vector<Point> tubeContour, int imageWidth, int imageHeight) {
-    vector<Point> tubeConvex;
-    convexHull(tubeContour, tubeConvex);
-    for(vector<Point>::iterator it = tubeConvex.begin(); it != tubeConvex.end();) {
-        if((*it).x < 10 || (*it).y < 10 || imageWidth-(*it).x < 10 || imageHeight-(*it).y < 10) {
-            it = tubeConvex.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    return fitEllipseAMS(tubeConvex);
-}
-
-void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_ConstMicroDistanceSystem* ui) {
-    ImageDetector* detector = (ImageDetector*) pUser;
-
+void ImageDetector::detect() {
     Mat src;
     stDetectResult result;
 
-    while(detector->status()) {
+    while(this->is_running && this->processor->status()) {
         src = processor->getOneImageWait();
 
         int imageWidth = src.cols, imageHeight = src.rows;
@@ -105,13 +88,13 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
         result.dis_TubeWire = result.dis_TubeCenterWire - result.tubeRadius;  // px
 
         double pxToUm = realWireDia/getDisByLineLine(result.wireUpEdge, result.wireDownEdge);
-        detector->setPxToUm(pxToUm);
+        this->setPxToUm(pxToUm);
 
         result.tubeRadius *= pxToUm;  // um
         result.dis_TubeCenterWire *= pxToUm;  // um
         result.dis_TubeWire *= pxToUm;  // um
     
-        detector->pushDetectResBuffer(result);
+        this->pushDetectResBuffer(result);
 
 #ifdef OPENCV_SHOW_IMAGES
         Mat canvas = Mat::zeros(Size(1000, 1000), CV_8UC3);
@@ -127,19 +110,22 @@ void detect(ImageProcessor* processor, void* pUser, double realWireDia, Ui_Const
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), tubeCircle[2], Scalar(255, 0, 0), 2);
         circle(canvas, Point(tubeCircle[0], tubeCircle[1]), 2, Scalar(0, 255, 0), 2);
 
-        // imshow("detect", canvas);
-        // waitKey(0);
+        imshow("detect", canvas);
+        waitKey(10);
 #endif
 
         ui->label_distance->setText(QString::number(result.dis_TubeWire) + " um");
     }
 
-    // destroyWindow("detect");
+#ifdef OPENCV_SHOW_IMAGES
+    destroyWindow("detect");
+#endif
 }
 
 
 ImageDetector::~ImageDetector() {
     this->is_running = false;
+    this->detectTrd->join();
 }
 
 ImageDetector::ImageDetector(ImageProcessor* processor, double realWireDia, Ui_ConstMicroDistanceSystem* ui) 
@@ -152,6 +138,6 @@ stDetectResult ImageDetector::getDetectRes() {
 }
 
 void ImageDetector::run() {
-    std::thread detectTrd(detect, this->processor, this, this->realWireDia, this->ui);
-    detectTrd.detach();
+    this->is_running = true;
+    this->detectTrd = new std::thread(detect, this);
 }

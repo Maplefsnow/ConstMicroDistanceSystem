@@ -1,13 +1,11 @@
 #include "CamRecorder.h"
 
-void record(Camera* cam, QString path, int fps, void* pUser, Ui_ConstMicroDistanceSystem* ui) {
-    CamRecorder* camRecorder = (CamRecorder*) pUser;
+void CamRecorder::record() {
+    cv::Size size(this->cam->getImageWidth(), this->cam->getImageHeight());
 
-    cv::Size size(cam->getImageWidth(), cam->getImageHeight());
+    cv::VideoWriter writer(this->path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), this->fps, size);
 
-    cv::VideoWriter writer(path.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, size);
-
-    while(camRecorder->status()) {
+    while(this->is_running) {
         cv::Mat image;
         cam->getOneImageWait(image, 0);
         writer.write(image);
@@ -23,10 +21,10 @@ CamRecorder::CamRecorder(Camera* cam, QString path, Ui_ConstMicroDistanceSystem*
 
 CamRecorder::~CamRecorder() {
     this->is_running = false;
+    this->recordTrd->join();
+    this->recordTrd = nullptr;
 }
 
 void CamRecorder::run() {
-    std::thread recordTrd(record, this->cam, this->path, this->fps, this, this->ui);
-    recordTrd.detach();
-}
+    this->recordTrd = new std::thread(CamRecorder::record, this);}
 

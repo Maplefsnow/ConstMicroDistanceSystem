@@ -1,9 +1,10 @@
 #include "FeedExecutor.h"
 #include "utils/GeometricCalc.cpp"
+#include <fstream>
 
 using namespace GC;
 
-void init(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem* ui, FeedExecutor* executor) {
+void FeedExecutor::init_pos() {
     stMotionParams motionParams = fitter->getMotionParams();
     stDetectResult detectRes = detector->getDetectRes();
 
@@ -20,13 +21,11 @@ void init(MotionController* controller, ParamsFitter *fitter, ImageDetector *det
     controller->feedAbs(0);
 
     while(!(controller->getFeedStatus() && controller->getSpinStatus())) ;
-    executor->is_init = true;
+    this->is_init = true;
 }
 
-void feedfunc(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem* ui, FeedExecutor* executor) {
-    if(!executor->is_init){
-        init(controller, fitter, detector, constDis, ui, executor);
-    }
+void FeedExecutor::feed_pos() {
+    if(!this->is_init) this->init_pos();
 
     stMotionParams motionParams = fitter->getMotionParams();
 
@@ -45,18 +44,41 @@ void feedfunc(MotionController* controller, ParamsFitter *fitter, ImageDetector 
     controller->move3DHelixRel(centerArr, endPosArr, &arrAxCnt, 1);
 }
 
+void FeedExecutor::data_record() {
+    std::cout << "DATA RECORDING..." << std::endl;
+
+    std::fstream sout;
+    sout.open("C:\\Users\\aicter\\Documents\\data.txt", std::ios::out);
+
+    while(this->is_running) {
+        stDetectResult res = this->detector->getDetectRes();
+        sout << res.dis_TubeWire << std::endl;
+    }
+
+    sout.close();
+
+    std::cout << "END DATA RECORD!" << std::endl;
+}
+
 FeedExecutor::FeedExecutor() {}
 
 FeedExecutor::FeedExecutor(MotionController* controller, ParamsFitter *fitter, ImageDetector *detector, const double constDis, Ui_ConstMicroDistanceSystem *ui) 
     : controller(controller), fitter(fitter), detector(detector), ui(ui), constDis(constDis) {
 }
 
+FeedExecutor::~FeedExecutor() {
+    this->is_running = false;
+    this->dataRecordTrd->join();
+    this->initPosTrd->join();
+    this->feedPosTrd->join();
+}
+
 void FeedExecutor::doInit() {
-    std::thread initTrd(init, this->controller, this->fitter, this->detector, this->constDis, this->ui, this);
-    initTrd.detach();
+    this->initPosTrd = new std::thread(init_pos, this);
+    this->initPosTrd->detach();
 }
 
 void FeedExecutor::doFeed() {
-    std::thread feedTrd(feedfunc, this->controller, this->fitter, this->detector, this->constDis, this->ui, this);
-    feedTrd.detach();
+    this->feedPosTrd = new std::thread(feed_pos, this);
+    this->dataRecordTrd = new std::thread(data_record, this);
 }

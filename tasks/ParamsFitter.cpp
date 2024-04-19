@@ -8,7 +8,7 @@
 using namespace std;
 using namespace GC;
 
-void doFit(ImageDetector *detector, MotionController* motionController, ParamsFitter* fitter) {
+void ParamsFitter::do_fit() {
     cv::Mat canvas = cv::Mat::zeros(cv::Size(1000,1000), CV_8UC3);
 
     double pxToUm = detector->getPxToUm();
@@ -41,7 +41,7 @@ void doFit(ImageDetector *detector, MotionController* motionController, ParamsFi
     stMotionParams params;
     params.fit_radius = r * pxToUm;
     params.alpha = (x0<x) ? M_PI-atan((y0-y)/(x0-x)) : -atan((y0-y)/(x0-x));
-    fitter->pushMotionParams(params);
+    this->pushMotionParams(params);
 
 #ifdef OPENCV_SHOW_IMAGES
     cv::circle(canvas, cv::Point2f(x, y), r, cv::Scalar(255,0,255), 1);
@@ -57,6 +57,7 @@ ParamsFitter::ParamsFitter(ImageDetector *detector, MotionController* motionCont
 }
 
 ParamsFitter::~ParamsFitter() {
+    this->fitTrd->join();
 }
 
 stMotionParams ParamsFitter::getMotionParams() {
@@ -70,6 +71,5 @@ stMotionParams ParamsFitter::getMotionParams() {
 }
 
 void ParamsFitter::run() {
-    thread fitTrd(doFit, this->detector, this->motionController, this);
-    fitTrd.detach();
+    this->fitTrd = new std::thread(do_fit, this);
 }
