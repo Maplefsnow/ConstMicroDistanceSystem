@@ -46,8 +46,9 @@ ConstMicroDistanceSystem::ConstMicroDistanceSystem(QWidget* parent)
 }
 
 ConstMicroDistanceSystem::~ConstMicroDistanceSystem() {
-    if(this->imageProcessor != nullptr) this->imageProcessor->stop();
+    delete this->feedExecutor;
     if(this->imageDetector != nullptr) this->imageDetector->stop();
+    if(this->imageProcessor != nullptr) this->imageProcessor->stop();
     if(this->camRecorder != nullptr) this->camRecorder->stop();
     if(this->cam != nullptr) this->cam->closeCam();
 
@@ -78,10 +79,21 @@ void ConstMicroDistanceSystem::onSwitchCamClicked() {
         this->ui->pushButton_switchCam->setText(QString("关闭相机"));
         this->ui->pushButton_switchGrab->setEnabled(true);
     } else {
-        if(this->imageDetector != nullptr) this->imageDetector->stop();
-        if(this->imageProcessor != nullptr) this->imageProcessor->stop();
+        if(this->imageDetector != nullptr) {
+            this->imageDetector->stop();
+            delete this->imageDetector;
+            this->imageDetector = nullptr;
+        }
+        if(this->imageProcessor != nullptr) {
+            this->imageProcessor->stop();
+            delete this->imageProcessor;
+            this->imageProcessor = nullptr;
+        }
+
         this->cam->closeCam();
+        delete this->cam;
         this->cam = nullptr;
+
         this->ui->pushButton_switchCam->setText(QString("打开相机"));
         this->ui->pushButton_switchGrab->setText(QString("开始采集"));
         this->ui->pushButton_switchGrab->setEnabled(false);
@@ -103,17 +115,28 @@ void ConstMicroDistanceSystem::onSwitchCardClicked() {
         this->ui->pushButton_switchCard->setText(QString("关闭板卡"));
     } else {
         Acm_DevClose(&this->advMotionDevHand);
+        if(this->feedExecutor != nullptr) delete this->feedExecutor;
+        delete this->motionController;
         this->motionController = nullptr;
+        this->feedExecutor = nullptr;
+
         this->ui->pushButton_switchCard->setText(QString("打开板卡"));
     }
 }
 
-void ConstMicroDistanceSystem::onSwitchCamGrabClicked()
-{
+void ConstMicroDistanceSystem::onSwitchCamGrabClicked() {
     if(this->cam == nullptr) return;
 
     if(this->cam->getGrabStatus()) {
         this->cam->stopGrab();
+        this->imageDetector->stop();
+        this->imageProcessor->stop();
+
+        delete this->imageDetector;
+        delete this->imageProcessor;
+        this->imageProcessor = nullptr;
+        this->imageDetector = nullptr;
+
         this->ui->pushButton_switchGrab->setText(QString("开始采集"));
     } else {
         this->cam->startGrab();
@@ -146,7 +169,9 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
 
     if(this->is_recording) {
         this->camRecorder->stop();
+        delete this->camRecorder;
         this->camRecorder = nullptr;
+
         this->ui->pushButton_switchRecord->setText(QString("开始录制"));
         this->is_recording = false;
 
@@ -158,10 +183,6 @@ void ConstMicroDistanceSystem::onSwitchRecordClicked() {
         this->ui->pushButton_switchRecord->setText(QString("停止录制"));
         this->is_recording = true;
     }
-}
-
-inline double getDisByLineLine(const cv::Vec3f line1, const cv::Vec3f line2) {
-    return abs(line1[2] - line2[2])/sqrt(line1[0]*line1[0] + line1[1]*line1[1]);
 }
 
 void ConstMicroDistanceSystem::onTestClicked() {

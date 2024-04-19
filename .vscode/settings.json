@@ -96,6 +96,7 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "qtabwidget": "cpp"
+        "qtabwidget": "cpp",
+        "fstream": "cpp"
     },
 }
